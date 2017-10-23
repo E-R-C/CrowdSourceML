@@ -3,4 +3,12 @@
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="picture">picture</string>
+    <string name="description_info">Info</string>
+    <string name="request_permission">This App Requires Camera Permission</string>
+    <string name="camera_error">This Device Doesn\'t support the Camera2 API</string>
+    <string name="intro_message">There is no activity!</string>
 </resources>

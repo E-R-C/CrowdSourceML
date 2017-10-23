@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/home/eric/.android/build-cache/d60495f479bfc32bd75ae2ce37f3c95e80de5a4f/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="2e92aa0163544a804a0b34f169ca61801770839a">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_fb209646d6b47a4337803f05c58b88ef64680ed2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/eric/.android/build-cache/9f68b639ddf63011fc8648ee68a1e4217212a7ca/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_5dbb8f89ae6173484dc84bebf0c8a2016be49e4d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/eric/.android/build-cache/ee7e508a47a426465962191a5bb2eddb84bc3be4/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="952944218ecedea1554a513dec0c14d570642843">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_0a2bca369a951bf9b891f30388354a6a49dbda82.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/eric/School/CrowdSourceML/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.0"
+        sha1="beb3ecee2d488da78b57801fcc2c2e432fbccaab">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_7b3ec2d9c0e28253bd4a29748f19d95f65b2327d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/eric/School/CrowdSourceML/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.0"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_09958a551d2faf66e2997c5a208abd4e88702d1e/classes.dex" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/eric/.android/build-cache/b75ab9097d4c28628784d66729e7c796922a1464/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="88246166d5afb106f532f6e6deae683c66b42c89">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_065bb4d776cda4ff5a3ba5e42a07a87644af91ca.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/eric/Android/Sdk/extras/android/m2repository/com/android/support/support-annotations/26.0.0-alpha1/support-annotations-26.0.0-alpha1.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="023ee503b631f69511e335a061ea008f8da60f40">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/support-annotations-26.0.0-alpha1_2863fbfd8057a722e9a0ef1a0330939feb847b62.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/eric/.android/build-cache/6d14fe6575d1046c9d4c540859fb59b29ce4f68a/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="47471eb19df288158b00b8d9cfa41bce7373f5cc">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_b15da74f6c35b7a4cc76aedd6749ae793472ede2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/eric/.android/build-cache/75f72d7d71f834c19bbd2f3c4d75b41fe74ece97/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="9935891f23923f39d002087085d9696568a9f657">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_9b7d019ffd8b4f6e2b58f6c0d87bbb8122885d17.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/eric/.android/build-cache/74251b3df8e8749d0dd021d51f31656cfe6f2e5e/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="fcd01fd11233459f546c437ec927e9b61bf7caf1">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_47d7483a8d3f15aaf6cc3646de65379f1285efe0.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/eric/.android/build-cache/fa72e91119903aa83eae9bccbd7a40ff24f03cda/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="18d31838aa4fcc768a8a0516e22cc13b94655d89">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_9dbf13b1063c8fafb591fe79eb13cd45a68332a6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/eric/.android/build-cache/ee0c2b4cf04bd4e32a7d01ce04c660ddd7224bab/output/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="26.0.0"
+        sha1="8df0e365e40beb151bc42dee20817721a6cab7b0">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_be78c439a2b82e2f758cdb3bdd48e602fbf2446a.jar" />
+    </item>
+
+</items>
