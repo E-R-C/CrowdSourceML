@@ -16,11 +16,11 @@ public final class DbContract {
     public static class LocationEntry implements BaseColumns {
         public static final String TABLE_NAME = "location";
         public static final String COLUMN_NAME_IMAGE_NAME = "imgfile";
-        public static final String COLUMN_NAME_FEATURE = "patchNum";
-        public static final String COLUMN_NAME_BUILDING = "building";
-        public static final String COLUMN_NAME_GPS_LONG = "longitude";
-        public static final String COLUMN_NAME_GPS_LAT = "latitude";
+        public static final String COLUMN_NAME_FEATURE = "hexCode";
+        public static final String COLUMN_NAME_LABEL = "building";
         public static final String COLUMN_NAME_IMAGE_ROT = "rotation";
+        public static final String COLUMN_NAME_FASTX = "fastx";
+        public static final String COLUMN_NAME_FASTY = "fasty";
     }
 
 }

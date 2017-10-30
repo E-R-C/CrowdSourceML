@@ -5,7 +5,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 import edu.hendrix.huynhem.seniorthesis.Util.Duple;
 
@@ -25,30 +27,26 @@ public class Image {
     }
 
 
-    public ArrayList<Duple<Integer, Integer>> getFastPoints(int numPoints){
-        ArrayList<Duple<Integer,Integer>> array = new ArrayList<>();
-        // TODO: Get Fast Points
-        return array;
-
+    public PriorityQueue<FASTFeature> getFastPoints(){
+        return FAST.calculateFASTPoints(this);
     }
     // first and second are the list of offsets from the center (each fastpoint) that we are comparing
     // if First > second, we store a 1, else we store a 0
-    public int[] getBriefDescriptors(ArrayList<Duple<Integer,Integer>> fastPoints,
-                                     Duple<Integer,Integer>[] first,
-                                     Duple<Integer,Integer>[] second) {
-        int[] result = new int[fastPoints.size()];
+    // How big is each desciptor? is each fast point stored as 256 bits?
+    public BigInteger[] getBriefDescriptors(ArrayList<FASTFeature> fastPoints,
+                                     ArrayList<Duple<Integer,Integer>> first,
+                                     ArrayList<Duple<Integer,Integer>> second) {
+
+        BigInteger[] result = new BigInteger[fastPoints.size()];
         for(int i = 0; i < fastPoints.size(); i++){
-            int descriptor = 0;
-            for(int j = 0; j < first.length; j++){
-                descriptor <<= 1;
-                descriptor |= comparePixel(getValueAt(first[j]), getValueAt(second[j]));
-            }
+            BigInteger descriptor = BriefPatches.calculateDescriptor(this,fastPoints.get(i));
             result[i] = descriptor;
         }
         return result;
     }
 
     // This could potentially be rewritten to test other comparison methods
+    // It returns 0001 or 0000 which will be OR'd with some 0 bit in the descriptor.
     public int comparePixel(int color1, int color2){
         byte score = 0;
         if(Color.red(color1) > Color.red(color2)) score ++;
@@ -69,6 +67,7 @@ public class Image {
         int newHeight = (int) Math.floor(bitmap.getHeight() * percent);
         return new Image(Bitmap.createScaledBitmap(bitmap,newWidth,newHeight,false));
     }
+
 
     public Image rotateImage(float degrees) {
         Matrix matrix = new Matrix();

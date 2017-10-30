@@ -11,18 +11,25 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DBHelper extends SQLiteOpenHelper {
+    private static DBHelper instance;
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Patches.db";
     public static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + DbContract.LocationEntry.TABLE_NAME + " ("
-            + DbContract.LocationEntry.COLUMN_NAME_IMAGE_NAME + " TEXT, " + DbContract.LocationEntry.COLUMN_NAME_BUILDING
+            + DbContract.LocationEntry.COLUMN_NAME_IMAGE_NAME + " TEXT, " + DbContract.LocationEntry.COLUMN_NAME_LABEL
             + " TEXT, " + DbContract.LocationEntry.COLUMN_NAME_FEATURE + " INTEGER, " + DbContract.LocationEntry.COLUMN_NAME_IMAGE_ROT
-            + " DECIMAL(8,5) " + DbContract.LocationEntry.COLUMN_NAME_GPS_LAT + " DECIMAL(8,5) "
-            + DbContract.LocationEntry.COLUMN_NAME_GPS_LONG + " DECIMAL(8,5)) ";
+            + " DECIMAL(8,5) " + DbContract.LocationEntry.COLUMN_NAME_FASTX + " INTEGER "
+            + DbContract.LocationEntry.COLUMN_NAME_FASTY + " INTEGER) ";
     public static final String SQL_DROP_TABLE = "DROP TABLE " + DbContract.LocationEntry.TABLE_NAME;
-    public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
+    private DBHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    public static synchronized DBHelper getInstance(Context c){
+        if (instance == null){
+            instance = new DBHelper(c.getApplicationContext());
+        }
+        return instance;
+    }
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_CREATE_TABLE);
