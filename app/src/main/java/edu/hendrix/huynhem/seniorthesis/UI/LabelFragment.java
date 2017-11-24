@@ -9,9 +9,19 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import java.io.File;
+import java.util.concurrent.ExecutionException;
+
+import edu.hendrix.huynhem.seniorthesis.Database.DBHelper;
+import edu.hendrix.huynhem.seniorthesis.Models.DatabaseNearestMatchClassifier;
+import edu.hendrix.huynhem.seniorthesis.Models.DatabaseNearestMatchTrainer;
 import edu.hendrix.huynhem.seniorthesis.R;
 
 
@@ -25,7 +35,7 @@ import edu.hendrix.huynhem.seniorthesis.R;
  */
 public class LabelFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String MOSTRECENTPICTURE = "UNIQUEKEY1";
+    public static final String MOSTRECENTPICTUREKEY = "UNIQUEKEY1";
 
     // TODO: Rename and change types of parameters
     private String mFileName;
@@ -34,6 +44,7 @@ public class LabelFragment extends Fragment {
 
     private ImageView iView = null;
     private Spinner spinner = null;
+
     public LabelFragment() {
         // Required empty public constructor
     }
@@ -48,7 +59,7 @@ public class LabelFragment extends Fragment {
     public static LabelFragment newInstance(String param1) {
         LabelFragment fragment = new LabelFragment();
         Bundle args = new Bundle();
-        args.putString(MOSTRECENTPICTURE, param1);
+        args.putString(MOSTRECENTPICTUREKEY, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -57,7 +68,7 @@ public class LabelFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mFileName = getArguments().getString(MOSTRECENTPICTURE);
+            mFileName = getArguments().getString(MOSTRECENTPICTUREKEY);
         }
     }
 
@@ -68,12 +79,47 @@ public class LabelFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_label, container, false);
     }
 
+    //  Initialize buttons here
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         iView = view.findViewById(R.id.imageView);
-
         iView.setImageBitmap(BitmapFactory.decodeFile(mFileName));
         spinner = view.findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.buildings, R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        Button back = view.findViewById(R.id.Back);
+        final ProgressBar pb = (ProgressBar) view.findViewById(R.id.progressBar);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                File f = view.getContext().getDatabasePath(DBHelper.DATABASE_NAME);
+                long dbSize = f.length();
+                Toast.makeText(view.getContext(),"Database size: " + dbSize, Toast.LENGTH_LONG).show();
+            }
+        });
+        Button saveAndTrainButton = view.findViewById(R.id.saveAndTrainButton);
+        saveAndTrainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseNearestMatchTrainer n = new DatabaseNearestMatchTrainer(getActivity().getApplicationContext());
+                n.setPb(pb);
+                n.execute(mFileName, (String) spinner.getSelectedItem());
+                Toast.makeText(view.getContext(),"Training: " + mFileName, Toast.LENGTH_LONG).show();
+            }
+        });
+        Button classifyButton = view.findViewById(R.id.classify_button);
+        classifyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseNearestMatchClassifier dc = new DatabaseNearestMatchClassifier(getActivity().getApplicationContext());
+                dc.setProgressBar(pb);
+                dc.execute(mFileName);
+                Toast.makeText(view.getContext(),"Classifying " + mFileName, Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

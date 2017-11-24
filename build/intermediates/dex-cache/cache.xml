@@ -29,24 +29,6 @@
         <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_0a2bca369a951bf9b891f30388354a6a49dbda82.jar" />
     </item>
     <item
-        is-multidex="true"
-        jar="/home/eric/School/CrowdSourceML/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="26.0.0"
-        sha1="beb3ecee2d488da78b57801fcc2c2e432fbccaab">
-        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_7b3ec2d9c0e28253bd4a29748f19d95f65b2327d/classes.dex" />
-    </item>
-    <item
-        is-multidex="true"
-        jar="/home/eric/School/CrowdSourceML/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
-        jumboMode="true"
-        optimize="true"
-        revision="26.0.0"
-        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
-        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_09958a551d2faf66e2997c5a208abd4e88702d1e/classes.dex" />
-    </item>
-    <item
         is-multidex="false"
         jar="/home/eric/.android/build-cache/b75ab9097d4c28628784d66729e7c796922a1464/output/jars/classes.jar"
         jumboMode="false"
@@ -108,6 +90,24 @@
         revision="26.0.0"
         sha1="8df0e365e40beb151bc42dee20817721a6cab7b0">
         <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/pre-dexed/debug/classes_be78c439a2b82e2f758cdb3bdd48e602fbf2446a.jar" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/eric/School/CrowdSourceML/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.0"
+        sha1="da7179a811253d37dce1ce58216be56e35c74e04">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_7b3ec2d9c0e28253bd4a29748f19d95f65b2327d/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/home/eric/School/CrowdSourceML/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.0"
+        sha1="3be78ebc2706b2e1fe2f12d5726887a92d6c183b">
+        <dex dex="/home/eric/School/CrowdSourceML/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_09958a551d2faf66e2997c5a208abd4e88702d1e/classes.dex" />
     </item>
 
 </items>

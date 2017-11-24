@@ -10,8 +10,6 @@ import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.net.URI;
-
 import edu.hendrix.huynhem.seniorthesis.R;
 
 /**
@@ -185,7 +183,7 @@ public class CameraActivity extends AppCompatActivity implements Camera2BasicFra
         // switch to new fragment.
         LabelFragment lf = new LabelFragment();
         Bundle args = new Bundle();
-        args.putString(LabelFragment.MOSTRECENTPICTURE,filename);
+        args.putString(LabelFragment.MOSTRECENTPICTUREKEY,filename);
         lf.setArguments(args);
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
 

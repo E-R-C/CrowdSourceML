@@ -1,10 +1,12 @@
 package edu.hendrix.huynhem.seniorthesis.Imaging;
 
+import android.support.annotation.NonNull;
+
 /**
  *
  */
 
-public class FASTFeature {
+public class FASTFeature implements Comparable<FASTFeature>{
     private int x, y;
     private float rank = 0;
     public FASTFeature(int x, int y) {
@@ -59,4 +61,8 @@ public class FASTFeature {
         return new FASTFeature((int)(xNumer/denom), (int)(yNumer/denom));
     }
 
+    @Override
+    public int compareTo(@NonNull FASTFeature fastFeature) {
+        return Float.compare(this.rank, fastFeature.rank);
+    }
 }

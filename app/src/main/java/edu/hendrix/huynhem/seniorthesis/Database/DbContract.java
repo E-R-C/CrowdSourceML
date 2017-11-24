@@ -19,6 +19,7 @@ public final class DbContract {
         public static final String COLUMN_NAME_FEATURE = "hexCode";
         public static final String COLUMN_NAME_LABEL = "building";
         public static final String COLUMN_NAME_IMAGE_ROT = "rotation";
+        public static final String COLUMN_NAME_SCALE = "scale";
         public static final String COLUMN_NAME_FASTX = "fastx";
         public static final String COLUMN_NAME_FASTY = "fasty";
     }
