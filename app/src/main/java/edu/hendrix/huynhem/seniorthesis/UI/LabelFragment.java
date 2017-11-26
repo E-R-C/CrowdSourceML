@@ -17,11 +17,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.concurrent.ExecutionException;
 
 import edu.hendrix.huynhem.seniorthesis.Database.DBHelper;
-import edu.hendrix.huynhem.seniorthesis.Models.DatabaseNearestMatchClassifier;
-import edu.hendrix.huynhem.seniorthesis.Models.DatabaseNearestMatchTrainer;
+import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobClassifier;
+import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobTrainer;
 import edu.hendrix.huynhem.seniorthesis.R;
 
 
@@ -103,20 +102,22 @@ public class LabelFragment extends Fragment {
         saveAndTrainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseNearestMatchTrainer n = new DatabaseNearestMatchTrainer(getActivity().getApplicationContext());
+//                DatabaseNearestMatchTrainer n = new DatabaseNearestMatchTrainer(getActivity().getApplicationContext());
+                DatabaseBlobTrainer n = new DatabaseBlobTrainer(getActivity().getApplicationContext());
                 n.setPb(pb);
                 n.execute(mFileName, (String) spinner.getSelectedItem());
-                Toast.makeText(view.getContext(),"Training: " + mFileName, Toast.LENGTH_LONG).show();
+//                Toast.makeText(view.getContext(),"Training: " + mFileName, Toast.LENGTH_LONG).show();
             }
         });
         Button classifyButton = view.findViewById(R.id.classify_button);
         classifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseNearestMatchClassifier dc = new DatabaseNearestMatchClassifier(getActivity().getApplicationContext());
+//                DatabaseNearestMatchClassifier dc = new DatabaseNearestMatchClassifier(getActivity().getApplicationContext());
+                DatabaseBlobClassifier dc = new DatabaseBlobClassifier(getActivity().getApplicationContext());
                 dc.setProgressBar(pb);
                 dc.execute(mFileName);
-                Toast.makeText(view.getContext(),"Classifying " + mFileName, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(view.getContext(),"Classifying " + mFileName, Toast.LENGTH_SHORT).show();
             }
         });
 

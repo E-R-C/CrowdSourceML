@@ -2,13 +2,11 @@ package edu.hendrix.huynhem.seniorthesis.Models;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ProgressBar;
 
-import java.util.HashMap;
 import java.util.PriorityQueue;
 
 import edu.hendrix.huynhem.seniorthesis.Database.DBHelper;
@@ -35,8 +33,8 @@ public class DatabaseNearestMatchTrainer extends AsyncTask<String, Void, Boolean
     // The BRIEF paper said that it can handle about 10-15 degrees in rotation. Therefore
     // Since I am assuming that nobody is going to take an upside down picture,
     // We only need to account for rotations from 0 to 180 degrees. Since 180/15 == 12, we choose 12.
-    static final int numRot = 12;
-    static final int numScales = 3;
+    static final int numRot = 3;
+    static final int numScales = 1;
 
     public DatabaseNearestMatchTrainer(Context context){
         c = context;
@@ -129,7 +127,6 @@ public class DatabaseNearestMatchTrainer extends AsyncTask<String, Void, Boolean
     protected Boolean doInBackground(String... strings) {
         String filelocation = strings[0];
         String label = strings[1];
-        // For now, just pretend this is only callled on train:
         train(filelocation,label);
         return true;
     }

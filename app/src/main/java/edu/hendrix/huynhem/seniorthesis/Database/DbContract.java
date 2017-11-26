@@ -23,5 +23,10 @@ public final class DbContract {
         public static final String COLUMN_NAME_FASTX = "fastx";
         public static final String COLUMN_NAME_FASTY = "fasty";
     }
+    public static class RestructuredBlobEntry implements  BaseColumns{
+        public static final String TABLE_NAME = "tableWithBlobs";
+        public static final String COLUMN_NAME_FEATURE = "hexCode";
+        public static final String COLUMN_NAME_COUNTBLOB = "blobCount";
+    }
 
 }
