@@ -3,7 +3,6 @@ package edu.hendrix.huynhem.seniorthesis.UI;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,11 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Toast;
 
-import java.io.File;
-
-import edu.hendrix.huynhem.seniorthesis.Database.DBHelper;
 import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobClassifier;
 import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobTrainer;
 import edu.hendrix.huynhem.seniorthesis.R;
@@ -27,7 +22,7 @@ import edu.hendrix.huynhem.seniorthesis.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LabelFragment.OnFragmentInteractionListener} interface
+ * {@link LabelFragmentNavigation} interface
  * to handle interaction events.
  * Use the {@link LabelFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -35,11 +30,12 @@ import edu.hendrix.huynhem.seniorthesis.R;
 public class LabelFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String MOSTRECENTPICTUREKEY = "UNIQUEKEY1";
+    public static final String LOG_TAG = "LABEL_FRAGMENT";
 
     // TODO: Rename and change types of parameters
     private String mFileName;
 
-    private OnFragmentInteractionListener mListener;
+    private LabelFragmentNavigation mListener;
 
     private ImageView iView = null;
     private Spinner spinner = null;
@@ -92,10 +88,10 @@ public class LabelFragment extends Fragment {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                File f = view.getContext().getDatabasePath(DBHelper.DATABASE_NAME);
-                long dbSize = f.length();
-                Toast.makeText(view.getContext(),"Database size: " + dbSize, Toast.LENGTH_LONG).show();
+                mListener.goToMenu();
+//                File f = view.getContext().getDatabasePath(DBHelper.DATABASE_NAME);
+//                long dbSize = f.length();
+//                Toast.makeText(view.getContext(),"Database size: " + dbSize, Toast.LENGTH_LONG).show();
             }
         });
         Button saveAndTrainButton = view.findViewById(R.id.saveAndTrainButton);
@@ -123,21 +119,15 @@ public class LabelFragment extends Fragment {
 
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof LabelFragmentNavigation) {
+            mListener = (LabelFragmentNavigation) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement LabelFragmentNavigation");
         }
     }
 
@@ -161,8 +151,10 @@ public class LabelFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    public interface LabelFragmentNavigation {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void goToCurrentJobs();
+        void goToMenu();
     }
+
 }

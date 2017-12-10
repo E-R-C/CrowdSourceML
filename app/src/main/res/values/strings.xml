@@ -11,4 +11,8 @@
     <string name="request_permission">This App Requires Camera Permission</string>
     <string name="camera_error">This Device Doesn\'t support the Camera2 API</string>
     <string name="intro_message">There is no activity!</string>
+
+    <string name="title_activity_main_menu">MainMenu</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="action_settings">Settings</string>
 </resources>
