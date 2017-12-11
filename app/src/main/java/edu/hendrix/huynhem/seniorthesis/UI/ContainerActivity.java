@@ -11,7 +11,7 @@ import java.util.HashMap;
 
 import edu.hendrix.huynhem.seniorthesis.R;
 
-public class ContainerActivity extends AppCompatActivity implements MainMenuFragment.onPictureCapture, LabelFragment.LabelFragmentNavigation{
+public class ContainerActivity extends AppCompatActivity implements TrainMenu.onPictureCapture, LabelFragment.LabelFragmentNavigation, TrainOrClassifyFragment.TrainOrClassifyInterface {
 
     HashMap<String,Fragment> mapOfFragments = new HashMap<>();
     private View mContentView;
@@ -20,9 +20,9 @@ public class ContainerActivity extends AppCompatActivity implements MainMenuFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mapOfFragments.put(MainMenuFragment.LOG_TAG,MainMenuFragment.newInstance());
+        mapOfFragments.put(TrainMenu.LOG_TAG, TrainMenu.newInstance());
         getFragmentManager().beginTransaction()
-                .add(R.id.FragmentView,mapOfFragments.get(MainMenuFragment.LOG_TAG)).commit();
+                .add(R.id.FragmentView,mapOfFragments.get(TrainMenu.LOG_TAG)).commit();
 
         setContentView(R.layout.activity_container);
 
@@ -62,11 +62,11 @@ public class ContainerActivity extends AppCompatActivity implements MainMenuFrag
 
     @Override
     public void goToMenu() {
-        MainMenuFragment mmf;
+        TrainMenu mmf;
         if (mapOfFragments.containsKey(LabelFragment.LOG_TAG)){
-            mmf = (MainMenuFragment) mapOfFragments.get(LabelFragment.LOG_TAG);
+            mmf = (TrainMenu) mapOfFragments.get(LabelFragment.LOG_TAG);
         } else {
-            mmf = new MainMenuFragment();
+            mmf = new TrainMenu();
         }
         Bundle args = new Bundle();
         mmf.setArguments(args);
@@ -75,5 +75,27 @@ public class ContainerActivity extends AppCompatActivity implements MainMenuFrag
         transaction.replace(R.id.MainFragmentContainer, mmf);
         transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    @Override
+    public void toTrainingFragment() {
+        TrainMenu mmf;
+        if (mapOfFragments.containsKey(LabelFragment.LOG_TAG)){
+            mmf = (TrainMenu) mapOfFragments.get(LabelFragment.LOG_TAG);
+        } else {
+            mmf = new TrainMenu();
+        }
+        Bundle args = new Bundle();
+        mmf.setArguments(args);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.MainFragmentContainer, mmf);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
+
+    @Override
+    public void toTestingFragment() {
+
     }
 }

@@ -33,12 +33,12 @@ import edu.hendrix.huynhem.seniorthesis.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MainMenuFragment.onPictureCapture} interface
+ * {@link TrainMenu.onPictureCapture} interface
  * to handle interaction events.
- * Use the {@link MainMenuFragment#newInstance} factory method to
+ * Use the {@link TrainMenu#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MainMenuFragment extends Fragment {
+public class TrainMenu extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -47,7 +47,6 @@ public class MainMenuFragment extends Fragment {
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 2;
     private static final String FRAGMENT_DIALOG = "Failed to get all permissions";
     public static final String LOG_TAG = "MAIN_MENU_FRAGMENT";
-    private String MOST_RECENT_PHOTO;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -55,7 +54,7 @@ public class MainMenuFragment extends Fragment {
     private onPictureCapture mListener;
 
     private String mCurrentPhotoPath;
-    public MainMenuFragment() {
+    public TrainMenu() {
         // Required empty public constructor
     }
 
@@ -64,11 +63,11 @@ public class MainMenuFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      *
-     * @return A new instance of fragment MainMenuFragment.
+     * @return A new instance of fragment TrainMenu.
      */
     // TODO: Rename and change types and number of parameters
-    public static MainMenuFragment newInstance() {
-        MainMenuFragment fragment = new MainMenuFragment();
+    public static TrainMenu newInstance() {
+        TrainMenu fragment = new TrainMenu();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -137,9 +136,9 @@ public class MainMenuFragment extends Fragment {
         Log.d(LOG_TAG, "Starting intent");
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        MOST_RECENT_PHOTO = timeStamp + ".png";
+        String MOST_RECENT_PHOTO = timeStamp + ".png";
 
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,MOST_RECENT_PHOTO);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, MOST_RECENT_PHOTO);
         Fragment frag = this;
         /** Pass your fragment reference **/
         frag.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);

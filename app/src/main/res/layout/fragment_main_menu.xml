@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context="edu.hendrix.huynhem.seniorthesis.UI.MainMenuFragment">
+    tools:context="edu.hendrix.huynhem.seniorthesis.UI.TrainMenu">
 
     <Button
         android:id="@+id/ChooseFromGalButton"

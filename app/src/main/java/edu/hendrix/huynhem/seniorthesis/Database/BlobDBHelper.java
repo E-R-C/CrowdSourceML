@@ -21,6 +21,8 @@ public class BlobDBHelper extends SQLiteOpenHelper {
     public static final String SQL_CREATE_BLOB_TABLE = "CREATE TABLE IF NOT EXISTS " + DbContract.RestructuredBlobEntry.TABLE_NAME + " ("
             + DbContract.RestructuredBlobEntry.COLUMN_NAME_FEATURE + " TEXT PRIMARY KEY, " + DbContract.RestructuredBlobEntry.COLUMN_NAME_COUNTBLOB
             + " BLOB) ";
+    public static final String SQL_CREATE_LOCATIONS_TABLE = "CREATE TABLE IF NOT EXISTS " + DbContract.LocationsEntry.TABLE_NAME + " ("
+            + DbContract.LocationsEntry.COLUMN_NAME_PLACE + " TEXT) ";
     private BlobDBHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -33,6 +35,7 @@ public class BlobDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_CREATE_BLOB_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_LOCATIONS_TABLE);
     }
 
     @Override
@@ -81,5 +84,9 @@ public class BlobDBHelper extends SQLiteOpenHelper {
             alc.set(1,Cursor2);
             return alc;
         }
+    }
+
+    public void insertNewLocation(String location){
+
     }
 }

@@ -20,6 +20,8 @@ import edu.hendrix.huynhem.seniorthesis.Imaging.FAST;
 import edu.hendrix.huynhem.seniorthesis.Imaging.FASTFeature;
 import edu.hendrix.huynhem.seniorthesis.Imaging.Image;
 
+import static edu.hendrix.huynhem.seniorthesis.Models.LearnerSettings.maxDimension;
+
 /**
  *
  */
@@ -29,6 +31,7 @@ public class DatabaseBlobClassifier extends AsyncTask<String, Integer, String> i
     BlobDBHelper blobDBHelper;
     Context c;
     SQLiteDatabase writableDB;
+
 
     ProgressBar pb;
     public DatabaseBlobClassifier(Context context){
@@ -49,7 +52,7 @@ public class DatabaseBlobClassifier extends AsyncTask<String, Integer, String> i
     public String classify(String imageLocation) {
         if(writableDB.isOpen()){
             BlobHistogram resultingHist = new BlobHistogram();
-            Image image = new Image(imageLocation, DatabaseNearestMatchTrainer.maxDimension);
+            Image image = new Image(imageLocation, maxDimension);
             PriorityQueue<FASTFeature> fastpts = image.getFastPoints();
             String[] projection = {
                     DbContract.RestructuredBlobEntry.COLUMN_NAME_COUNTBLOB

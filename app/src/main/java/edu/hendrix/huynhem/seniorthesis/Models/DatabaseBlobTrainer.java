@@ -22,9 +22,10 @@ import edu.hendrix.huynhem.seniorthesis.Imaging.FAST;
 import edu.hendrix.huynhem.seniorthesis.Imaging.FASTFeature;
 import edu.hendrix.huynhem.seniorthesis.Imaging.Image;
 
-import static edu.hendrix.huynhem.seniorthesis.Models.DatabaseNearestMatchTrainer.maxDimension;
-import static edu.hendrix.huynhem.seniorthesis.Models.DatabaseNearestMatchTrainer.numRot;
-import static edu.hendrix.huynhem.seniorthesis.Models.DatabaseNearestMatchTrainer.numScales;
+import static edu.hendrix.huynhem.seniorthesis.Models.LearnerSettings.maxDimension;
+import static edu.hendrix.huynhem.seniorthesis.Models.LearnerSettings.numRot;
+import static edu.hendrix.huynhem.seniorthesis.Models.LearnerSettings.numScales;
+
 
 /**
  *

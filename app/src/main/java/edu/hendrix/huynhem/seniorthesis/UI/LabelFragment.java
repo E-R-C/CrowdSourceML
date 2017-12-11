@@ -89,16 +89,13 @@ public class LabelFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 mListener.goToMenu();
-//                File f = view.getContext().getDatabasePath(DBHelper.DATABASE_NAME);
-//                long dbSize = f.length();
-//                Toast.makeText(view.getContext(),"Database size: " + dbSize, Toast.LENGTH_LONG).show();
+
             }
         });
         Button saveAndTrainButton = view.findViewById(R.id.saveAndTrainButton);
         saveAndTrainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                DatabaseNearestMatchTrainer n = new DatabaseNearestMatchTrainer(getActivity().getApplicationContext());
                 DatabaseBlobTrainer n = new DatabaseBlobTrainer(getActivity().getApplicationContext());
                 n.setPb(pb);
                 n.execute(mFileName, (String) spinner.getSelectedItem());
@@ -109,7 +106,6 @@ public class LabelFragment extends Fragment {
         classifyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                DatabaseNearestMatchClassifier dc = new DatabaseNearestMatchClassifier(getActivity().getApplicationContext());
                 DatabaseBlobClassifier dc = new DatabaseBlobClassifier(getActivity().getApplicationContext());
                 dc.setProgressBar(pb);
                 dc.execute(mFileName);
