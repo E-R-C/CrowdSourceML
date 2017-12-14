@@ -105,6 +105,5 @@ public class DatabaseBlobClassifier extends AsyncTask<String, Integer, String> i
         super.onPostExecute(s);
         Toast.makeText(c," I predict the image is " + s, Toast.LENGTH_LONG).show();
         Log.d(LOG_TAG, s);
-
     }
 }

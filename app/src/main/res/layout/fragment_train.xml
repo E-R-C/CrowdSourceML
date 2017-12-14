@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
-    tools:context="edu.hendrix.huynhem.seniorthesis.UI.LabelFragment">
+    tools:context="edu.hendrix.huynhem.seniorthesis.UI.TrainFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -30,13 +30,27 @@
             android:layout_width="match_parent"
             android:layout_height="50dp" />
 
-        <EditText
-            android:id="@+id/otherTextBox"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Other Location"
-            android:inputType="text" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/NewLocationTextBox"
+                android:layout_width="274dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ems="10"
+                android:hint="New Location"
+                android:inputType="text" />
+
+            <Button
+                android:id="@+id/Add_New_Loc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Add Location" />
+        </LinearLayout>
 
         <LinearLayout
             style="@android:style/DeviceDefault.ButtonBar"
@@ -50,7 +64,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Save and Train" />
+                android:text="Train" />
 
             <Button
                 android:id="@+id/classify_button"
@@ -65,14 +79,14 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/Back"
+        android:id="@+id/Back_Button"
         style="?attr/toolbarNavigationButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:elevation="1dp"
-        android:text="Back"
+        android:layout_alignParentStart="true"
         android:layout_below="@+id/linearLayout"
-        android:layout_alignParentStart="true" />
+        android:elevation="1dp"
+        android:text="Select New Photo" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -80,7 +94,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/Back"
+        android:layout_below="@+id/Back_Button"
         android:progressTint="@color/colorPrimary"
         android:visibility="visible"
         tools:visibility="visible" />

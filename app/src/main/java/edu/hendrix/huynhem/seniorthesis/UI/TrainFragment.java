@@ -10,10 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import edu.hendrix.huynhem.seniorthesis.Database.BlobDBHelper;
 import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobClassifier;
 import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobTrainer;
 import edu.hendrix.huynhem.seniorthesis.R;
@@ -24,10 +27,10 @@ import edu.hendrix.huynhem.seniorthesis.R;
  * Activities that contain this fragment must implement the
  * {@link LabelFragmentNavigation} interface
  * to handle interaction events.
- * Use the {@link LabelFragment#newInstance} factory method to
+ * Use the {@link TrainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LabelFragment extends Fragment {
+public class TrainFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String MOSTRECENTPICTUREKEY = "UNIQUEKEY1";
     public static final String LOG_TAG = "LABEL_FRAGMENT";
@@ -39,8 +42,9 @@ public class LabelFragment extends Fragment {
 
     private ImageView iView = null;
     private Spinner spinner = null;
+    private BlobDBHelper dbHelper = BlobDBHelper.getInstance(getActivity().getApplication().getApplicationContext());
 
-    public LabelFragment() {
+    public TrainFragment() {
         // Required empty public constructor
     }
 
@@ -48,11 +52,11 @@ public class LabelFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment LabelFragment.
+     * @param param1 Name of Photo.
+     * @return A new instance of fragment TrainFragment.
      */
-    public static LabelFragment newInstance(String param1) {
-        LabelFragment fragment = new LabelFragment();
+    public static TrainFragment newInstance(String param1) {
+        TrainFragment fragment = new TrainFragment();
         Bundle args = new Bundle();
         args.putString(MOSTRECENTPICTUREKEY, param1);
         fragment.setArguments(args);
@@ -71,7 +75,7 @@ public class LabelFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_label, container, false);
+        return inflater.inflate(R.layout.fragment_train, container, false);
     }
 
     //  Initialize buttons here
@@ -79,12 +83,18 @@ public class LabelFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         iView = view.findViewById(R.id.imageView);
         iView.setImageBitmap(BitmapFactory.decodeFile(mFileName));
-        spinner = view.findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.buildings, R.layout.support_simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        Button back = view.findViewById(R.id.Back);
-        final ProgressBar pb = (ProgressBar) view.findViewById(R.id.progressBar);
+        Toast.makeText(view.getContext(),mFileName,Toast.LENGTH_LONG).show();
+        updateSpinner(view);
+        final EditText locationTextBox = view.findViewById(R.id.NewLocationTextBox);
+        Button back = view.findViewById(R.id.Back_Button);
+        Button addNewLocation = view.findViewById(R.id.Add_New_Loc);
+        addNewLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dbHelper.insertNewLocation(locationTextBox.getText().toString());
+            }
+        });
+        final ProgressBar pb = view.findViewById(R.id.progressBar);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -114,7 +124,13 @@ public class LabelFragment extends Fragment {
         });
 
     }
+    private void updateSpinner(View view){
+        spinner = view.findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.buildings, R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -151,6 +167,7 @@ public class LabelFragment extends Fragment {
         // TODO: Update argument type and name
         void goToCurrentJobs();
         void goToMenu();
+        void goToTest(String fileName);
     }
 
 }

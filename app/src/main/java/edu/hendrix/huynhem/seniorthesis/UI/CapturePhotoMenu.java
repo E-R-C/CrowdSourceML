@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,12 +34,12 @@ import edu.hendrix.huynhem.seniorthesis.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link TrainMenu.onPictureCapture} interface
+ * {@link CapturePhotoMenu.onPictureCapture} interface
  * to handle interaction events.
- * Use the {@link TrainMenu#newInstance} factory method to
+ * Use the {@link CapturePhotoMenu#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TrainMenu extends Fragment {
+public class CapturePhotoMenu extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -47,6 +48,7 @@ public class TrainMenu extends Fragment {
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 2;
     private static final String FRAGMENT_DIALOG = "Failed to get all permissions";
     public static final String LOG_TAG = "MAIN_MENU_FRAGMENT";
+    String MOST_RECENT_PHOTO_PATH;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -54,7 +56,7 @@ public class TrainMenu extends Fragment {
     private onPictureCapture mListener;
 
     private String mCurrentPhotoPath;
-    public TrainMenu() {
+    public CapturePhotoMenu() {
         // Required empty public constructor
     }
 
@@ -63,11 +65,11 @@ public class TrainMenu extends Fragment {
      * this fragment using the provided parameters.
      *
      *
-     * @return A new instance of fragment TrainMenu.
+     * @return A new instance of fragment CapturePhotoMenu.
      */
     // TODO: Rename and change types and number of parameters
-    public static TrainMenu newInstance() {
-        TrainMenu fragment = new TrainMenu();
+    public static CapturePhotoMenu newInstance() {
+        CapturePhotoMenu fragment = new CapturePhotoMenu();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -85,7 +87,7 @@ public class TrainMenu extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_menu, container, false);
+        return inflater.inflate(R.layout.fragment_capture_photo, container, false);
     }
 
 
@@ -135,24 +137,48 @@ public class TrainMenu extends Fragment {
         }
         Log.d(LOG_TAG, "Starting intent");
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String MOST_RECENT_PHOTO = timeStamp + ".png";
+        File outputFile = null;
+        try {
+            outputFile = createNextFile();
+            MOST_RECENT_PHOTO_PATH= outputFile.getAbsolutePath();
+            Uri photoLocationUri = FileProvider.getUriForFile(getActivity().getApplicationContext(),
+                    "edu.hendrix.huynhem",
+                    outputFile
+                    );
 
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, MOST_RECENT_PHOTO);
-        Fragment frag = this;
-        /** Pass your fragment reference **/
-        frag.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, photoLocationUri);
+
+            Fragment frag = this;
+            /** Pass your fragment reference **/
+            frag.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+        } catch (IOException e) {
+            Log.d(LOG_TAG, "Failed to create file, This is why your program is failing right now");
+        }
+
+
     }
-    private void initializeButtons(View view){
-        Button takePhotoButton = (Button) view.findViewById(R.id.TakePictureButton);
-        takePhotoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                captureImage();
+
+    private File createNextFile() throws IOException {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), LOG_TAG);
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.d(LOG_TAG, "failed to create directory");
+                return null;
             }
-        });
-    }
+        }
 
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String prefix = "IMG_" + timeStamp;
+        File storageDir = getActivity().getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                prefix,
+                ".jpg",
+                storageDir
+        );
+        MOST_RECENT_PHOTO_PATH = image.getAbsolutePath();
+        return image;
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -160,13 +186,13 @@ public class TrainMenu extends Fragment {
             if (requestCode == REQUEST_IMAGE_CAPTURE) {
                 // Do something with imagePath
 
-                Bitmap photo = (Bitmap) data.getExtras().get("data");
+//                Bitmap photo = (Bitmap) data.getExtras().get("data");
 //                imageview.setImageBitmap(photo);
                 // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-                Uri selectedImage = getImageUri(getActivity(), photo);
-                String realPath=getRealPathFromURI(selectedImage);
-                selectedImage = Uri.parse(realPath);
-                mListener.pictureCaptured(selectedImage.toString());
+//                Uri selectedImage = getImageUri(getActivity(), photo);
+//                String realPath=getRealPathFromURI(selectedImage);
+//                selectedImage = Uri.parse(realPath);
+                mListener.pictureCaptured(MOST_RECENT_PHOTO_PATH);
             }
         }
     }

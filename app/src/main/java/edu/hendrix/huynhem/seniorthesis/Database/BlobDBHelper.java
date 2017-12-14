@@ -1,11 +1,13 @@
 package edu.hendrix.huynhem.seniorthesis.Database;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.location.Location;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -87,6 +89,38 @@ public class BlobDBHelper extends SQLiteOpenHelper {
     }
 
     public void insertNewLocation(String location){
-
+        String loc = location.toUpperCase();
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        String[] projection = {DbContract.LocationsEntry.COLUMN_NAME_PLACE};
+        String selection = loc;
+        String[] args  = {loc};
+        Cursor cursor = sqlDB.query(
+                DbContract.LocationsEntry.TABLE_NAME,
+                projection,
+                selection,          // columns for WHERE clause
+                args,               // values for WHERE clause
+                null,               // group rows?
+                null,               // filter
+                null,               // Sort order
+                "1"                 // Sort Limit
+        );
+        if (cursor.getCount() == 0){
+            ContentValues cv = new ContentValues();
+            cv.put(DbContract.LocationsEntry.COLUMN_NAME_PLACE,loc);
+            sqlDB.insert(DbContract.LocationsEntry.TABLE_NAME, null, cv);
+        }
+    }
+    public Cursor getLocationsCursor(){
+        SQLiteDatabase sqlDB = this.getWritableDatabase();
+        String[] projection  = {DbContract.LocationsEntry.COLUMN_NAME_PLACE};
+        return sqlDB.query(
+                DbContract.LocationsEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                "DESC"
+        );
     }
 }

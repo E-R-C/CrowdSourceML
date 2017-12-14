@@ -16,4 +16,13 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_container">ContainerActivity</string>
+    <string name="TakePhotoInstruction">Welcome to my Exploration into image processing and machine learning on Android!
+        To start, We need to pick a photo</string>
+    <string name="choose_photo_from_gallery">Choose Photo From Gallery</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="Train_or_classify_prompt">Now, should we train our model with this image or try to predict what it is?</string>
+    <string name="train_it">Train</string>
+    <string name="Test">Test</string>
+    <string name="Choose_another_photo">Choose Another Photo</string>
+    <string name="Statistics_Text">Statistics will show up here when Training is done</string>
 </resources>

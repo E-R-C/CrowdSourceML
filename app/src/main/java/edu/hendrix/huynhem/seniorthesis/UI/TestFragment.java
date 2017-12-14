@@ -1,34 +1,41 @@
 package edu.hendrix.huynhem.seniorthesis.UI;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+
+import java.io.File;
 
 import edu.hendrix.huynhem.seniorthesis.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link TrainOrClassifyInterface} interface
+ * {@link TestFragemntNavigation} interface
  * to handle interaction events.
- * Use the {@link TrainOrClassifyFragment#newInstance} factory method to
+ * Use the {@link TestFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TrainOrClassifyFragment extends Fragment {
+public class TestFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String photoFileNameKey = "param1";
-    private static final String LOG_TAG = "TRAIN_OR_CLASSIFY_FRAGMENT";
-    private String photoFileName;
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+    public static final String LOG_TAG = "TEST_FRAGMENT";
 
-    private TrainOrClassifyInterface mListener;
+    // TODO: Rename and change types of parameters
+    private String FileName;
 
-    public TrainOrClassifyFragment() {
+    private TestFragemntNavigation mListener;
+
+    public TestFragment() {
         // Required empty public constructor
     }
 
@@ -36,14 +43,14 @@ public class TrainOrClassifyFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 File name of the photo
-     * @return A new instance of fragment TrainOrClassifyFragment.
+     * @param param1 File We're training on.
+     * @return A new instance of fragment TestFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TrainOrClassifyFragment newInstance(String param1) {
-        TrainOrClassifyFragment fragment = new TrainOrClassifyFragment();
+    public static TestFragment newInstance(String param1) {
+        TestFragment fragment = new TestFragment();
         Bundle args = new Bundle();
-        args.putString(photoFileNameKey, param1);
+        args.putString(ARG_PARAM1, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,7 +59,7 @@ public class TrainOrClassifyFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            photoFileName = getArguments().getString(photoFileNameKey);
+            FileName = getArguments().getString(ARG_PARAM1);
         }
     }
 
@@ -60,41 +67,37 @@ public class TrainOrClassifyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_train_or_classify, container, false);
+        return inflater.inflate(R.layout.fragment_test, container, false);
     }
-
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Button trainButton = view.findViewById(R.id.Train_Button);
-        Button testButton = view.findViewById(R.id.Test_Button);
-
-        trainButton.setOnClickListener(new View.OnClickListener() {
+        ImageView imageView = view.findViewById(R.id.Classifying_ImageView);
+        Button GoBack = view.findViewById(R.id.Back_Button2);
+        GoBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mListener.toTrainingFragment(photoFileName);
+                onButtonPressed();
             }
         });
-
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mListener.toTestingFragment(photoFileName);
-            }
-        });
-
-
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed() {
+        if (mListener != null) {
+            mListener.pickNewPhoto();
+        }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof TrainOrClassifyInterface) {
-            mListener = (TrainOrClassifyInterface) context;
+        if (context instanceof TestFragemntNavigation) {
+            mListener = (TestFragemntNavigation) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement TrainOrClassifyInterface");
+                    + " must implement TestFragemntNavigation");
         }
     }
 
@@ -114,9 +117,7 @@ public class TrainOrClassifyFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface TrainOrClassifyInterface {
-        // TODO: Update argument type and name
-        void toTrainingFragment(String filename);
-        void toTestingFragment(String filename);
+    public interface TestFragemntNavigation {
+        void pickNewPhoto();
     }
 }
