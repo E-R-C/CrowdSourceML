@@ -6,6 +6,6 @@ package edu.hendrix.huynhem.seniorthesis.Models;
 
 public class LearnerSettings {
     public static final int numRot = 10;
-    public static final int numScales = 2;
+    public static final int numScales = 3;
     public static final int maxDimension = 200;
 }

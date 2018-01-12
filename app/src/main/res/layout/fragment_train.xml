@@ -1,27 +1,24 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
+    android:orientation="vertical"
     tools:context="edu.hendrix.huynhem.seniorthesis.UI.TrainFragment">
 
     <!-- TODO: Update blank fragment layout -->
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:contentDescription="Image Just  Taken"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:contentDescription="Image Just Taken"
+        android:scaleType="fitXY"
         app:srcCompat="@android:color/background_dark" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/imageView"
         android:orientation="vertical"
         android:id="@+id/linearLayout">
 
@@ -29,6 +26,8 @@
             android:id="@+id/spinner"
             android:layout_width="match_parent"
             android:layout_height="50dp" />
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,10 +52,13 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ButtonContainer"
             style="@android:style/DeviceDefault.ButtonBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
+
 
             <Button
                 android:id="@+id/saveAndTrainButton"
@@ -75,28 +77,26 @@
                 android:text="classify" />
 
         </LinearLayout>
-
+        <Button
+            android:id="@+id/Back_Button"
+            style="?attr/toolbarNavigationButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/linearLayout"
+            android:layout_weight="1"
+            android:elevation="1dp"
+            android:text="Select New Photo" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:progressTint="@color/colorPrimary"
+            android:visibility="visible"
+            tools:visibility="visible" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/Back_Button"
-        style="?attr/toolbarNavigationButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/linearLayout"
-        android:elevation="1dp"
-        android:text="Select New Photo" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/Back_Button"
-        android:progressTint="@color/colorPrimary"
-        android:visibility="visible"
-        tools:visibility="visible" />
 
-</RelativeLayout>
+</LinearLayout>

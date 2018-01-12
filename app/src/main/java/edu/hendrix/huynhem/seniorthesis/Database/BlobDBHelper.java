@@ -7,10 +7,10 @@ import android.database.MatrixCursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.location.Location;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -28,6 +28,7 @@ public class BlobDBHelper extends SQLiteOpenHelper {
     private BlobDBHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     public static synchronized BlobDBHelper getInstance(Context c){
         if (instance == null){
             instance = new BlobDBHelper(c.getApplicationContext());
@@ -38,11 +39,13 @@ public class BlobDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_CREATE_BLOB_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_LOCATIONS_TABLE);
+        Log.d("DB", "ONCreate dbCreated");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+        sqLiteDatabase.execSQL(SQL_CREATE_BLOB_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_LOCATIONS_TABLE);
     }
     public ArrayList<Cursor> getData(String Query){
         //get writable database
@@ -89,10 +92,11 @@ public class BlobDBHelper extends SQLiteOpenHelper {
     }
 
     public void insertNewLocation(String location){
+
         String loc = location.toUpperCase();
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         String[] projection = {DbContract.LocationsEntry.COLUMN_NAME_PLACE};
-        String selection = loc;
+        String selection = DbContract.LocationsEntry.COLUMN_NAME_PLACE + " = ?";
         String[] args  = {loc};
         Cursor cursor = sqlDB.query(
                 DbContract.LocationsEntry.TABLE_NAME,
@@ -110,17 +114,26 @@ public class BlobDBHelper extends SQLiteOpenHelper {
             sqlDB.insert(DbContract.LocationsEntry.TABLE_NAME, null, cv);
         }
     }
-    public Cursor getLocationsCursor(){
+    public List<String> getLocations(){
+        onCreate(this.getWritableDatabase());
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         String[] projection  = {DbContract.LocationsEntry.COLUMN_NAME_PLACE};
-        return sqlDB.query(
+        Cursor c = sqlDB.query(
                 DbContract.LocationsEntry.TABLE_NAME,
                 projection,
                 null,
                 null,
                 null,
                 null,
-                "DESC"
+                DbContract.LocationsEntry.COLUMN_NAME_PLACE + " ASC"
         );
+        ArrayList<String> result = new ArrayList<>();
+        if(c.moveToFirst()){
+            do {
+                result.add(c.getString(0));
+            } while (c.moveToNext());
+        }
+        c.close();
+        return result;
     }
 }

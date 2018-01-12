@@ -2,9 +2,13 @@ package edu.hendrix.huynhem.seniorthesis.UI;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 import edu.hendrix.huynhem.seniorthesis.Database.BlobDBHelper;
 import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobClassifier;
@@ -42,7 +48,7 @@ public class TrainFragment extends Fragment {
 
     private ImageView iView = null;
     private Spinner spinner = null;
-    private BlobDBHelper dbHelper = BlobDBHelper.getInstance(getActivity().getApplication().getApplicationContext());
+    private BlobDBHelper dbHelper;
 
     public TrainFragment() {
         // Required empty public constructor
@@ -69,6 +75,7 @@ public class TrainFragment extends Fragment {
         if (getArguments() != null) {
             mFileName = getArguments().getString(MOSTRECENTPICTUREKEY);
         }
+        dbHelper = BlobDBHelper.getInstance(getActivity().getApplication().getApplicationContext());
     }
 
     @Override
@@ -81,9 +88,8 @@ public class TrainFragment extends Fragment {
     //  Initialize buttons here
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        iView = view.findViewById(R.id.imageView);
-        iView.setImageBitmap(BitmapFactory.decodeFile(mFileName));
-        Toast.makeText(view.getContext(),mFileName,Toast.LENGTH_LONG).show();
+        spinner = view.findViewById(R.id.spinner);
+        showImage(view);
         updateSpinner(view);
         final EditText locationTextBox = view.findViewById(R.id.NewLocationTextBox);
         Button back = view.findViewById(R.id.Back_Button);
@@ -92,6 +98,8 @@ public class TrainFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 dbHelper.insertNewLocation(locationTextBox.getText().toString());
+                updateSpinner(view);
+                locationTextBox.setText("");
             }
         });
         final ProgressBar pb = view.findViewById(R.id.progressBar);
@@ -109,7 +117,6 @@ public class TrainFragment extends Fragment {
                 DatabaseBlobTrainer n = new DatabaseBlobTrainer(getActivity().getApplicationContext());
                 n.setPb(pb);
                 n.execute(mFileName, (String) spinner.getSelectedItem());
-//                Toast.makeText(view.getContext(),"Training: " + mFileName, Toast.LENGTH_LONG).show();
             }
         });
         Button classifyButton = view.findViewById(R.id.classify_button);
@@ -119,19 +126,68 @@ public class TrainFragment extends Fragment {
                 DatabaseBlobClassifier dc = new DatabaseBlobClassifier(getActivity().getApplicationContext());
                 dc.setProgressBar(pb);
                 dc.execute(mFileName);
-//                Toast.makeText(view.getContext(),"Classifying " + mFileName, Toast.LENGTH_SHORT).show();
             }
         });
 
     }
+    // This updates the spinner from the locations database.
     private void updateSpinner(View view){
-        spinner = view.findViewById(R.id.spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity().getApplicationContext(), R.array.buildings, R.layout.support_simple_spinner_dropdown_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-
+        dbHelper.getWritableDatabase();
+        ArrayAdapter<String> locationDat = new ArrayAdapter<>(
+                getActivity().getApplicationContext(),
+                android.R.layout.simple_spinner_dropdown_item,
+                dbHelper.getLocations());
+        spinner.setAdapter(locationDat);
     }
 
+    // The following 4 functions use code from this stack overflow link to fix the rotation of the image
+    // https://stackoverflow.com/questions/31925712/android-getting-an-image-from-gallery-comes-rotated
+    // Note, this will possible lead to memory overflow errors. if this happens, I'll need to set a maximum resolution
+    private void showImage(View view){
+        iView = view.findViewById(R.id.imageView);
+        try {
+            iView.setImageBitmap(getRotatedImage());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e(LOG_TAG, "Unable to load image!");
+        }
+        Toast.makeText(view.getContext(),mFileName,Toast.LENGTH_LONG).show();
+    }
+    private Bitmap getRotatedImage() throws IOException {
+        ExifInterface exif = new ExifInterface(mFileName);
+        int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+        Bitmap bitmap = BitmapFactory.decodeFile(mFileName);
+        switch (orientation){
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotate(bitmap, 90);
+
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotate(bitmap, 180);
+
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotate(bitmap, 270);
+
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                return flip(bitmap, true, false);
+
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                return flip(bitmap, false, true);
+
+            default:
+                return bitmap;
+        }
+    }
+    public static Bitmap rotate(Bitmap bitmap, float degrees) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degrees);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
+    public static Bitmap flip(Bitmap bitmap, boolean horizontal, boolean vertical) {
+        Matrix matrix = new Matrix();
+        matrix.preScale(horizontal ? -1 : 1, vertical ? -1 : 1);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -147,10 +203,6 @@ public class TrainFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    private void setupSpinner(){
-
     }
 
     /**
