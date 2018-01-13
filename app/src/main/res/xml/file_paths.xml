@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path name="my_images" path="Android/data/edu.hendrix.huynhem.seniorthesis/files/Pictures" />
+<paths>
+    <!--<external-path name="CrowdSourceML" path="Android/data/edu.hendrix.huynhem.seniorthesis/files/Pictures/CrowdSourceML" />-->
+    <external-path name="Photos" path="Pictures/CrowdSourceML" />
 </paths>

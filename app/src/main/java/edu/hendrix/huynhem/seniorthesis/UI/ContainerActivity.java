@@ -3,10 +3,11 @@ package edu.hendrix.huynhem.seniorthesis.UI;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
+import java.io.File;
 import java.util.HashMap;
 
 import edu.hendrix.huynhem.seniorthesis.R;
@@ -33,6 +34,7 @@ public class ContainerActivity extends AppCompatActivity implements CapturePhoto
 
     @Override
     public void pictureCaptured(String filename) {
+        galleryAddPic(filename);
         TrainFragment lf;
         if (mapOfFragments.containsKey(TrainFragment.LOG_TAG)){
             lf = (TrainFragment) mapOfFragments.get(TrainFragment.LOG_TAG);
@@ -116,4 +118,13 @@ public class ContainerActivity extends AppCompatActivity implements CapturePhoto
     public void pickNewPhoto() {
         goToMenu();
     }
+
+    private void galleryAddPic(String photoPath) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(photoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
 }

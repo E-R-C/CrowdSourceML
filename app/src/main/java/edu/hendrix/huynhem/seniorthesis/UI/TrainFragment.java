@@ -117,6 +117,9 @@ public class TrainFragment extends Fragment {
                 DatabaseBlobTrainer n = new DatabaseBlobTrainer(getActivity().getApplicationContext());
                 n.setPb(pb);
                 n.execute(mFileName, (String) spinner.getSelectedItem());
+                // TODO: Record the filenames and the labels of each thing into the database
+                // I need to be able to mass classify and create a confusion matrix at the end
+                // Goal for 1/12/2018: create a fragment that classifies all of the trained images
             }
         });
         Button classifyButton = view.findViewById(R.id.classify_button);

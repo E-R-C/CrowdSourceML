@@ -8,10 +8,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="false"
+        android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
         android:layout_centerVertical="true"
-        android:gravity="center"
         android:orientation="vertical">
 
         <TextView
@@ -38,5 +37,4 @@
             android:text="@string/take_photo" />
 
     </LinearLayout>
-
 </RelativeLayout>

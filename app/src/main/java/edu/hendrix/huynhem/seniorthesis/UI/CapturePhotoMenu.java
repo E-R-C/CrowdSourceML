@@ -47,7 +47,8 @@ public class CapturePhotoMenu extends Fragment {
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 2;
     private static final String FRAGMENT_DIALOG = "Failed to get all permissions";
-    public static final String LOG_TAG = "MAIN_MENU_FRAGMENT";
+    public static final String LOG_TAG = "CAPTURE_PHOTO_MENU";
+    private static final String ALBUM_NAME = "CrowdSourceML";
     String MOST_RECENT_PHOTO_PATH;
 
     // TODO: Rename and change types of parameters
@@ -137,20 +138,17 @@ public class CapturePhotoMenu extends Fragment {
         }
         Log.d(LOG_TAG, "Starting intent");
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File outputFile = null;
+        File outputFile;
         try {
             outputFile = createNextFile();
-            MOST_RECENT_PHOTO_PATH= outputFile.getAbsolutePath();
+            MOST_RECENT_PHOTO_PATH = outputFile.getAbsolutePath();
             Uri photoLocationUri = FileProvider.getUriForFile(getActivity().getApplicationContext(),
                     "edu.hendrix.huynhem",
                     outputFile
                     );
-
+            Log.d(LOG_TAG, "LOCATION OF FILE: " + photoLocationUri.toString());
             intent.putExtra(MediaStore.EXTRA_OUTPUT, photoLocationUri);
-
-            Fragment frag = this;
-            /** Pass your fragment reference **/
-            frag.startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
         } catch (IOException e) {
             Log.d(LOG_TAG, "Failed to create file, This is why your program is failing right now");
         }
@@ -159,18 +157,18 @@ public class CapturePhotoMenu extends Fragment {
     }
 
     private File createNextFile() throws IOException {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), LOG_TAG);
+//        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+//                Environment.DIRECTORY_PICTURES), ALBUM_NAME);
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) + "/" + ALBUM_NAME);
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
                 Log.d(LOG_TAG, "failed to create directory");
                 return null;
             }
         }
-
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String prefix = "IMG_" + timeStamp;
-        File storageDir = getActivity().getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = mediaStorageDir;
         File image = File.createTempFile(
                 prefix,
                 ".jpg",
