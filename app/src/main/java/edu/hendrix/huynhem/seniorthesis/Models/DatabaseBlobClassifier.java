@@ -67,7 +67,7 @@ public class DatabaseBlobClassifier extends AsyncTask<String, Integer, String> i
                         projection,         // the columns to return
                         selection,          // columns for WHERE clause
                         args,               // values for WHERE clause
-                        null,               // group rows?
+                        null,               // group rows
                         null,               // filter
                         null,                // Sort order
                         "1"                 // limit to 1

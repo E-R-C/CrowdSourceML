@@ -6,11 +6,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.util.Log;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.PriorityQueue;
-
-import edu.hendrix.huynhem.seniorthesis.Util.Duple;
 
 /**
  * This can be changed into an abstract class because we may change the way we calculate the brief
@@ -52,16 +48,7 @@ public class Image {
     public PriorityQueue<FASTFeature> getFastPoints(){
         return FAST.calculateFASTPoints(this);
     }
-    // first and second are the list of offsets from the center (each fastpoint) that we are comparing
-    // if First > second, we store a 1, else we store a 0
-    public BigInteger[] getBriefDescriptors(ArrayList<FASTFeature> fastPoints) {
-        BigInteger[] result = new BigInteger[fastPoints.size()];
-        for(int i = 0; i < fastPoints.size(); i++){
-            BigInteger descriptor = BriefPatches.calculateDescriptor(this,fastPoints.get(i));
-            result[i] = descriptor;
-        }
-        return result;
-    }
+
 
     // This could potentially be rewritten to test other comparison methods
     // It returns 0001 or 0000 which will be OR'd with some 0 bit in the descriptor.
@@ -84,9 +71,6 @@ public class Image {
         }
         return -1;
     }
-    public int getValueAt(Duple<Integer,Integer> xy){
-        return getValueAt(xy.getOne(), xy.getTwo());
-    }
 
     public int getIntensity(int x, int y){
         int color = getValueAt(x,y);
@@ -105,13 +89,11 @@ public class Image {
         return this;
     }
 
-
     public Image rotateImage(float degrees) {
         Matrix matrix = new Matrix();
         matrix.setRotate(degrees);
         Bitmap bp = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,false);
         return new Image(bp);
     }
-
 
 }
