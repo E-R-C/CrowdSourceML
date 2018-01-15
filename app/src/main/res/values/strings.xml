@@ -25,4 +25,5 @@
     <string name="Test">Test</string>
     <string name="Choose_another_photo">Choose Another Photo</string>
     <string name="Statistics_Text">Statistics will show up here when Training is done</string>
+    <string name="test_with_trained_data">Test With Trained Data</string>
 </resources>

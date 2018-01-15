@@ -131,10 +131,10 @@ public class TrainFragment extends Fragment {
                 dc.execute(mFileName);
             }
         });
-
     }
     // This updates the spinner from the locations database.
     private void updateSpinner(View view){
+        // This method calls ensures that the database has been created at least
         dbHelper.getWritableDatabase();
         ArrayAdapter<String> locationDat = new ArrayAdapter<>(
                 getActivity().getApplicationContext(),
