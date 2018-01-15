@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">SeniorThesis</string>
 
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="picture">picture</string>
@@ -17,7 +14,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_container">ContainerActivity</string>
     <string name="TakePhotoInstruction">Welcome to my Exploration into image processing and machine learning on Android!
-        To start, We need to pick a photo</string>
+        To start, We need to pick a photo. TODO: Make the UI Better and let the user change the settings of the Learner </string>
     <string name="choose_photo_from_gallery">Choose Photo From Gallery</string>
     <string name="take_photo">Take Photo</string>
     <string name="Train_or_classify_prompt">Now, should we train our model with this image or try to predict what it is?</string>
@@ -26,4 +23,6 @@
     <string name="Choose_another_photo">Choose Another Photo</string>
     <string name="Statistics_Text">Statistics will show up here when Training is done</string>
     <string name="test_with_trained_data">Test With Trained Data</string>
+    <string name="TestAllPrompt">Please pick which location to test:</string>
+    <string name="ResultsPrompt">Results will show up here when classification is done</string>
 </resources>
