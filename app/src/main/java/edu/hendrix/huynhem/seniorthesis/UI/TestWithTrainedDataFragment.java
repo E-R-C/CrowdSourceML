@@ -67,6 +67,12 @@ public class TestWithTrainedDataFragment extends Fragment {
         trainButton = view.findViewById(R.id.TestWithTrainedButton);
         spinner = view.findViewById(R.id.TestAllSpinner);
         resultsTextView = view.findViewById(R.id.TestAllResultsTextView);
+        trainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         super.onViewCreated(view, savedInstanceState);
     }
 

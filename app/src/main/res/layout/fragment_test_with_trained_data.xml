@@ -19,14 +19,14 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/Start Training"
+        android:id="@+id/StartTraining"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/Test" />
 
     <ProgressBar
         android:id="@+id/TestAllProgressbar"
-        style="@style/?android:attr/progressBarStyleHorizontal"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

@@ -149,7 +149,6 @@ public class BlobDBHelper extends SQLiteOpenHelper {
         return result;
     }
     public HashMap<String, String> getFilesAndLabels(){
-        onCreate(getWritableDatabase());
         SQLiteDatabase sqlDB = getWritableDatabase();
         String[] projection = {DbContract.ImageLabelEntry.COLUMN_NAME_FILE, DbContract.ImageLabelEntry.COLUMN_NAME_LABEL};
         Cursor c = sqlDB.query(
@@ -170,5 +169,49 @@ public class BlobDBHelper extends SQLiteOpenHelper {
             } while (c.moveToNext());
         }
         return result;
+    }
+    public HashMap<String, String> getFilesAndLabels(List<String> files){
+        // There could potentially be a time where there are too many files to query, the default SQLite query limit is 1,000,000 characters,
+        HashMap<String, String> result = new HashMap<>();
+        SQLiteDatabase sqlDB = getWritableDatabase();
+        String[] selectionArgs = (String[]) files.toArray();
+        String[] projection = {DbContract.ImageLabelEntry.COLUMN_NAME_FILE, DbContract.ImageLabelEntry.COLUMN_NAME_LABEL};
+        String selectionQuery = makeSelectionQuery(DbContract.ImageLabelEntry.COLUMN_NAME_FILE, selectionArgs.length);
+        if (selectionQuery.length() > 750000){
+            List<String> l1 = files.subList(0, files.size()/2);
+            List<String> l2 = files.subList(files.size()/2, files.size());
+            result.putAll(getFilesAndLabels(l1));
+            result.putAll(getFilesAndLabels(l2));
+            return result;
+        } else {
+            Cursor c = sqlDB.query(
+                    DbContract.ImageLabelEntry.TABLE_NAME,
+                    projection,
+                    selectionQuery,
+                    selectionArgs,
+                    null,
+                    null,
+                    null
+            );
+            if(c.moveToFirst()){
+                do {
+                    String filename = c.getString(c.getColumnIndex(DbContract.ImageLabelEntry.COLUMN_NAME_FILE));
+                    String label = c.getString(c.getColumnIndex(DbContract.ImageLabelEntry.COLUMN_NAME_LABEL));
+                    result.put(filename,label);
+                } while (c.moveToNext());
+            }
+            return result;
+        }
+
+    }
+    private String makeSelectionQuery(String columnname, int numFiles){
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < numFiles - 1; i++){
+            sb.append(columnname);
+            sb.append(" = ? OR ");
+        }
+        sb.append(columnname);
+        sb.append(" = ? ");
+        return sb.toString();
     }
 }

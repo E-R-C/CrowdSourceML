@@ -6,9 +6,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.PriorityQueue;
 
 import edu.hendrix.huynhem.seniorthesis.Database.BlobDBHelper;
@@ -19,20 +21,22 @@ import edu.hendrix.huynhem.seniorthesis.Imaging.BriefPatches;
 import edu.hendrix.huynhem.seniorthesis.Imaging.FAST;
 import edu.hendrix.huynhem.seniorthesis.Imaging.FASTFeature;
 import edu.hendrix.huynhem.seniorthesis.Imaging.Image;
+import edu.hendrix.huynhem.seniorthesis.Util.ClassificationReport;
 
 import static edu.hendrix.huynhem.seniorthesis.Models.LearnerSettings.maxDimension;
 
 /**
- *
+ * This class is going to be modified to take in an arbitrary amount of input and mass output
  */
 
-public class DatabaseBlobClassifier extends AsyncTask<String, Integer, String> implements ModelClassifierInterface{
+public class DatabaseBlobClassifier extends AsyncTask<String, Integer, HashMap<String, String>> implements ModelClassifierInterface{
     final static String LOG_TAG = "DATABASE_BLOB_CLASS";
     BlobDBHelper blobDBHelper;
     Context c;
     SQLiteDatabase writableDB;
 
-
+    String truePositiveLabel;
+    TextView output;
     ProgressBar pb;
     public DatabaseBlobClassifier(Context context){
         c = context;
@@ -43,9 +47,16 @@ public class DatabaseBlobClassifier extends AsyncTask<String, Integer, String> i
         this.pb = pb;
     }
 
+    public void setTruePositiveLabel(String s){
+        truePositiveLabel = s;
+    }
     @Override
-    protected String doInBackground(String... strings) {
-        return classify(strings[0]);
+    protected HashMap<String, String> doInBackground(String... strings) {
+        HashMap<String, String> result = new HashMap<>();
+        for(String s: strings){
+            result.put(s, classify(s));
+        }
+        return result;
     }
 
     @Override
@@ -78,12 +89,9 @@ public class DatabaseBlobClassifier extends AsyncTask<String, Integer, String> i
                 try {
                     BlobHistogram bh = Serializer.deserializeBlob(blobBytes);
                     resultingHist = resultingHist.mergeMakeNewCopy(bh);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
-                publishProgress();
             }
             String result = resultingHist.getMaxLabel();
             if (result == null){
@@ -100,10 +108,13 @@ public class DatabaseBlobClassifier extends AsyncTask<String, Integer, String> i
     public ModelClassifierInterface fromString() {
         return null;
     }
+
     @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-        Toast.makeText(c," I predict the image is " + s, Toast.LENGTH_LONG).show();
-        Log.d(LOG_TAG, s);
+    protected void onPostExecute(HashMap<String, String> stringStringHashMap) {
+        ArrayList<String> list = new ArrayList<>();
+        list.addAll(stringStringHashMap.keySet());
+        HashMap<String, String> actual = blobDBHelper.getFilesAndLabels(list);
+        ClassificationReport cr = new ClassificationReport(actual, stringStringHashMap, "Hi");
     }
+
 }
