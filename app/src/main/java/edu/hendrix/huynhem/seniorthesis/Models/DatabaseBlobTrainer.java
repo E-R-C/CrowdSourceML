@@ -61,6 +61,7 @@ public class DatabaseBlobTrainer extends AsyncTask<String, Void, Boolean> implem
     public void train(String imageLocation, String label) {
         HashMap<String, BlobHistogram> tempBlobs = new HashMap<>();
         Log.d(LOG_TAG, "START OF TRAINING");
+        blobDBHelper.insertNewFile(imageLocation, label);
         double startTime = System.currentTimeMillis();
         if(writableDB.isOpen()){
             float scaleStep = 0.5f/numScales; // 1 -  the left number is how big the final scale will be.

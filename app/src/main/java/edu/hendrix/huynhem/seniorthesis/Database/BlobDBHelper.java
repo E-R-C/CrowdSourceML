@@ -1,5 +1,6 @@
 package edu.hendrix.huynhem.seniorthesis.Database;
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,6 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -18,12 +20,13 @@ import java.util.List;
 
 public class BlobDBHelper extends SQLiteOpenHelper {
     static BlobDBHelper instance;
-    public static final String DATABASE_NAME = "Blobs.db";
-    public static final int DATABASE_VERSION = 1;
-    public static final String SQL_CREATE_BLOB_TABLE = "CREATE TABLE IF NOT EXISTS " + DbContract.RestructuredBlobEntry.TABLE_NAME + " ("
+    private static final String DATABASE_NAME = "Blobs.db";
+    private static final int DATABASE_VERSION = 1;
+    private static final String SQL_CREATE_BLOB_TABLE = "CREATE TABLE IF NOT EXISTS " + DbContract.RestructuredBlobEntry.TABLE_NAME + " ("
             + DbContract.RestructuredBlobEntry.COLUMN_NAME_FEATURE + " TEXT PRIMARY KEY, " + DbContract.RestructuredBlobEntry.COLUMN_NAME_COUNTBLOB
             + " BLOB) ";
-    public static final String SQL_CREATE_LOCATIONS_TABLE = "CREATE TABLE IF NOT EXISTS " + DbContract.LocationsEntry.TABLE_NAME + " ("
+    private static final String SQL_CREATE_FILE_TABLE = "CREATE TABLE IF NOT EXISTS " +  DbContract.ImageLabelEntry.TABLE_NAME + "(" + DbContract.ImageLabelEntry.COLUMN_NAME_FILE + " TEXT PRIMARY KEY, " + DbContract.ImageLabelEntry.COLUMN_NAME_LABEL + " TEXT) ";
+    private static final String SQL_CREATE_LOCATIONS_TABLE = "CREATE TABLE IF NOT EXISTS " + DbContract.LocationsEntry.TABLE_NAME + " ("
             + DbContract.LocationsEntry.COLUMN_NAME_PLACE + " TEXT) ";
     private BlobDBHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -39,6 +42,7 @@ public class BlobDBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(SQL_CREATE_BLOB_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_LOCATIONS_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_FILE_TABLE);
         Log.d("DB", "ONCreate dbCreated");
     }
 
@@ -46,7 +50,9 @@ public class BlobDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         sqLiteDatabase.execSQL(SQL_CREATE_BLOB_TABLE);
         sqLiteDatabase.execSQL(SQL_CREATE_LOCATIONS_TABLE);
+        sqLiteDatabase.execSQL(SQL_CREATE_FILE_TABLE);
     }
+
     public ArrayList<Cursor> getData(String Query){
         //get writable database
         SQLiteDatabase sqlDB = this.getWritableDatabase();
@@ -91,8 +97,14 @@ public class BlobDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public void insertNewFile(String filename, String label){
+        SQLiteDatabase sqlDB = getWritableDatabase();
+        ContentValues cv = new ContentValues();
+        cv.put(DbContract.ImageLabelEntry.COLUMN_NAME_FILE, filename);
+        cv.put(DbContract.ImageLabelEntry.COLUMN_NAME_LABEL, label);
+        sqlDB.insert(DbContract.ImageLabelEntry.TABLE_NAME, null, cv);
+    }
     public void insertNewLocation(String location){
-
         String loc = location.toUpperCase();
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         String[] projection = {DbContract.LocationsEntry.COLUMN_NAME_PLACE};
@@ -130,10 +142,33 @@ public class BlobDBHelper extends SQLiteOpenHelper {
         ArrayList<String> result = new ArrayList<>();
         if(c.moveToFirst()){
             do {
-                result.add(c.getString(0));
+                result.add(c.getString(c.getColumnIndex(projection[0])));
             } while (c.moveToNext());
         }
         c.close();
+        return result;
+    }
+    public HashMap<String, String> getFilesAndLabels(){
+        onCreate(getWritableDatabase());
+        SQLiteDatabase sqlDB = getWritableDatabase();
+        String[] projection = {DbContract.ImageLabelEntry.COLUMN_NAME_FILE, DbContract.ImageLabelEntry.COLUMN_NAME_LABEL};
+        Cursor c = sqlDB.query(
+                DbContract.ImageLabelEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        HashMap<String, String> result = new HashMap<>();
+        if(c.moveToFirst()){
+            do {
+                String filename = c.getString(c.getColumnIndex(DbContract.ImageLabelEntry.COLUMN_NAME_FILE));
+                String label = c.getString(c.getColumnIndex(DbContract.ImageLabelEntry.COLUMN_NAME_LABEL));
+                result.put(filename,label);
+            } while (c.moveToNext());
+        }
         return result;
     }
 }
