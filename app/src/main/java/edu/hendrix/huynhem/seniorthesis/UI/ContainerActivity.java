@@ -8,21 +8,22 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import java.io.File;
-import java.util.HashMap;
 
 import edu.hendrix.huynhem.seniorthesis.R;
 
-public class ContainerActivity extends AppCompatActivity implements CapturePhotoMenu.onPictureCapture, TrainFragment.LabelFragmentNavigation, TrainOrClassifyFragment.TrainOrClassifyInterface, TestFragment.TestFragemntNavigation {
+public class ContainerActivity extends AppCompatActivity
+        implements CapturePhotoMenu.capturePhotoMenuInteractions,
+        TrainFragment.LabelFragmentNavigation, TrainOrClassifyFragment.TrainOrClassifyInterface,
+        TestFragment.TestFragemntNavigation, TestWithTrainedDataFragment.TestWithTrainedDataInter {
 
-    HashMap<String,Fragment> mapOfFragments = new HashMap<>();
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mapOfFragments.put(CapturePhotoMenu.LOG_TAG, CapturePhotoMenu.newInstance());
+        CapturePhotoMenu frag = CapturePhotoMenu.newInstance();
         getFragmentManager().beginTransaction()
-                .add(R.id.FragmentView,mapOfFragments.get(CapturePhotoMenu.LOG_TAG)).commit();
+                .add(R.id.FragmentView,frag).commit();
 
         setContentView(R.layout.activity_container);
    }
@@ -35,20 +36,16 @@ public class ContainerActivity extends AppCompatActivity implements CapturePhoto
     @Override
     public void pictureCaptured(String filename) {
         galleryAddPic(filename);
-        TrainFragment lf;
-        if (mapOfFragments.containsKey(TrainFragment.LOG_TAG)){
-            lf = (TrainFragment) mapOfFragments.get(TrainFragment.LOG_TAG);
-        } else {
-            lf = new TrainFragment();
-        }
+        TrainFragment lf = new TrainFragment();
         Bundle args = new Bundle();
         args.putString(TrainFragment.MOSTRECENTPICTUREKEY,filename);
-        lf.setArguments(args);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        replaceFragment(lf, args);
+    }
 
-        transaction.replace(R.id.FragmentView, lf);
-        transaction.addToBackStack(null);
-        transaction.commit();
+    @Override
+    public void goToTestWithTrained() {
+        TestWithTrainedDataFragment tf = new TestWithTrainedDataFragment();
+        replaceFragment(tf, new Bundle());
     }
 
     @Override
@@ -58,55 +55,26 @@ public class ContainerActivity extends AppCompatActivity implements CapturePhoto
 
     @Override
     public void goToMenu() {
-        CapturePhotoMenu mmf;
-        if (mapOfFragments.containsKey(TrainFragment.LOG_TAG)){
-            mmf = (CapturePhotoMenu) mapOfFragments.get(TrainFragment.LOG_TAG);
-        } else {
-            mmf = new CapturePhotoMenu();
-        }
+        CapturePhotoMenu frag = new CapturePhotoMenu();
         Bundle args = new Bundle();
-        mmf.setArguments(args);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        transaction.replace(R.id.FragmentView, mmf);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        frag.setArguments(args);
+        replaceFragment(frag, args);
     }
 
     @Override
     public void goToTest(String filename) {
-        TestFragment tf;
-        if (mapOfFragments.containsKey(TrainFragment.LOG_TAG)){
-            tf = (TestFragment) mapOfFragments.get(TestFragment.LOG_TAG);
-        } else {
-            tf = new TestFragment();
-        }
+        TestFragment tf = new TestFragment();
         Bundle args = new Bundle();
         args.putString(TrainFragment.MOSTRECENTPICTUREKEY,filename);
-        tf.setArguments(args);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        transaction.replace(R.id.FragmentView, tf);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        replaceFragment(tf, args);
     }
 
     @Override
     public void toTrainingFragment(String filename) {
-        TrainFragment lf;
-        if (mapOfFragments.containsKey(TrainFragment.LOG_TAG)){
-            lf = (TrainFragment) mapOfFragments.get(TrainFragment.LOG_TAG);
-        } else {
-            lf = new TrainFragment();
-        }
+        TrainFragment tf = new TrainFragment();
         Bundle args = new Bundle();
         args.putString(TrainFragment.MOSTRECENTPICTUREKEY,filename);
-        lf.setArguments(args);
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-        transaction.replace(R.id.FragmentView, lf);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        replaceFragment(tf, args);
     }
 
     @Override
@@ -126,5 +94,16 @@ public class ContainerActivity extends AppCompatActivity implements CapturePhoto
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
     }
+    private void replaceFragment(Fragment f, Bundle args){
+        f.setArguments(args);
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.FragmentView, f);
+        transaction.addToBackStack(null);
+        transaction.commit();
+    }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }

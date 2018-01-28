@@ -126,7 +126,7 @@ public class BlobDBHelper extends SQLiteOpenHelper {
             sqlDB.insert(DbContract.LocationsEntry.TABLE_NAME, null, cv);
         }
     }
-    public List<String> getLocations(){
+    public ArrayList<String> getLocations(){
         onCreate(this.getWritableDatabase());
         SQLiteDatabase sqlDB = this.getWritableDatabase();
         String[] projection  = {DbContract.LocationsEntry.COLUMN_NAME_PLACE};
@@ -148,7 +148,7 @@ public class BlobDBHelper extends SQLiteOpenHelper {
         c.close();
         return result;
     }
-    public HashMap<String, String> getFilesAndLabels(){
+    public HashMap<String, String> getAllFilesAndLabels(){
         SQLiteDatabase sqlDB = getWritableDatabase();
         String[] projection = {DbContract.ImageLabelEntry.COLUMN_NAME_FILE, DbContract.ImageLabelEntry.COLUMN_NAME_LABEL};
         Cursor c = sqlDB.query(
@@ -170,18 +170,25 @@ public class BlobDBHelper extends SQLiteOpenHelper {
         }
         return result;
     }
-    public HashMap<String, String> getFilesAndLabels(List<String> files){
+
+    private HashMap<String, String> getFileLabelGivenList(List<String> files, String columnName){
         // There could potentially be a time where there are too many files to query, the default SQLite query limit is 1,000,000 characters,
         HashMap<String, String> result = new HashMap<>();
         SQLiteDatabase sqlDB = getWritableDatabase();
-        String[] selectionArgs = (String[]) files.toArray();
+        String[] selectionArgs = new String[files.size()];
+        for(int i = 0; i < files.size(); i++){
+            selectionArgs[i] = files.get(i);
+        }
         String[] projection = {DbContract.ImageLabelEntry.COLUMN_NAME_FILE, DbContract.ImageLabelEntry.COLUMN_NAME_LABEL};
-        String selectionQuery = makeSelectionQuery(DbContract.ImageLabelEntry.COLUMN_NAME_FILE, selectionArgs.length);
-        if (selectionQuery.length() > 750000){
+        String selectionQuery = makeSelectionQuery(columnName, selectionArgs.length);
+        // The following if statement is a bad way to implement this because there are still cases
+        // where the length isn't greater than 500,000 but when the arguments are put int, it
+        // becomes too long. fixing this is a low priority TODO.
+        if (selectionQuery.length() > 500000){
             List<String> l1 = files.subList(0, files.size()/2);
             List<String> l2 = files.subList(files.size()/2, files.size());
-            result.putAll(getFilesAndLabels(l1));
-            result.putAll(getFilesAndLabels(l2));
+            result.putAll(getFileLabelGivenFiles(l1));
+            result.putAll(getFileLabelGivenFiles(l2));
             return result;
         } else {
             Cursor c = sqlDB.query(
@@ -202,6 +209,14 @@ public class BlobDBHelper extends SQLiteOpenHelper {
             }
             return result;
         }
+    }
+
+
+    public HashMap<String, String> getFileLabelGivenLabels(List<String> labels){
+        return getFileLabelGivenList(labels, DbContract.ImageLabelEntry.COLUMN_NAME_LABEL);
+    }
+    public HashMap<String, String> getFileLabelGivenFiles(List<String> files){
+        return getFileLabelGivenList(files, DbContract.ImageLabelEntry.COLUMN_NAME_FILE);
 
     }
     private String makeSelectionQuery(String columnname, int numFiles){

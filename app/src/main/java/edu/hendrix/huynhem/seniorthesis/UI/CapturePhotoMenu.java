@@ -31,7 +31,7 @@ import edu.hendrix.huynhem.seniorthesis.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CapturePhotoMenu.onPictureCapture} interface
+ * {@link capturePhotoMenuInteractions} interface
  * to handle interaction events.
  * Use the {@link CapturePhotoMenu#newInstance} factory method to
  * create an instance of this fragment.
@@ -41,6 +41,7 @@ public class CapturePhotoMenu extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final int REQUEST_IMAGE_CAPTURE = 12345;
+    private static final int REQUEST_IMAGE_FROM_GAL = 1337;
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 2;
     private static final String FRAGMENT_DIALOG = "Failed to get all permissions";
@@ -51,7 +52,7 @@ public class CapturePhotoMenu extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
 
-    private onPictureCapture mListener;
+    private capturePhotoMenuInteractions pictureListener;
 
     private String mCurrentPhotoPath;
     public CapturePhotoMenu() {
@@ -92,6 +93,15 @@ public class CapturePhotoMenu extends Fragment {
     // Initialize UI here
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Button chooseFromGallery = view.findViewById(R.id.ChooseFromGalButton);
+        chooseFromGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(Intent.ACTION_PICK);
+                i.setType("image/*");
+                startActivityForResult(i, REQUEST_IMAGE_FROM_GAL);
+            }
+        });
         Button captureNewImageButton = view.findViewById(R.id.TakePictureButton);
         captureNewImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +109,13 @@ public class CapturePhotoMenu extends Fragment {
                 captureImage();
             }
         });
-        super.onViewCreated(view, savedInstanceState);
+        Button testWithTrainedImages = view.findViewById(R.id.TestWithTrainedButton);
+        testWithTrainedImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pictureListener.goToTestWithTrained();
+            }
+        });
 
     }
     private void requestPermissions(){
@@ -187,7 +203,11 @@ public class CapturePhotoMenu extends Fragment {
 //                Uri selectedImage = getImageUri(getActivity(), photo);
 //                String realPath=getRealPathFromURI(selectedImage);
 //                selectedImage = Uri.parse(realPath);
-                mListener.pictureCaptured(MOST_RECENT_PHOTO_PATH);
+                pictureListener.pictureCaptured(MOST_RECENT_PHOTO_PATH);
+            } else if (requestCode == REQUEST_IMAGE_FROM_GAL){
+                final Uri imageUri = data.getData();
+                MOST_RECENT_PHOTO_PATH =  imageUri.getPath();
+                pictureListener.pictureCaptured(MOST_RECENT_PHOTO_PATH);
             }
         }
     }
@@ -195,18 +215,20 @@ public class CapturePhotoMenu extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof onPictureCapture) {
-            mListener = (onPictureCapture) context;
+        if (context instanceof capturePhotoMenuInteractions) {
+            pictureListener = (capturePhotoMenuInteractions) context;
+
+
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement LabelFragmentNavigation");
+                    + " must implement OnPictureCapture");
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        pictureListener = null;
     }
 
     /**
@@ -219,7 +241,9 @@ public class CapturePhotoMenu extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface onPictureCapture{
+    public interface capturePhotoMenuInteractions {
         public void pictureCaptured(String filename);
+        void goToTestWithTrained();
     }
+
 }

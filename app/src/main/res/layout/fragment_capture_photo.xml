@@ -37,4 +37,11 @@
         android:layout_weight="1"
         android:text="@string/test_with_trained_data" />
 
+    <Button
+        android:id="@+id/TestWithUntrainedDataButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Test With Untrained Data" />
+
 </LinearLayout>

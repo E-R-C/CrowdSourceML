@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
@@ -26,22 +27,25 @@ import edu.hendrix.huynhem.seniorthesis.Util.ClassificationReport;
 import static edu.hendrix.huynhem.seniorthesis.Models.LearnerSettings.maxDimension;
 
 /**
- * This class is going to be modified to take in an arbitrary amount of input and mass output
+ * This class is going to be modified to take in an arbitrary amount of input and mass outputTextView
  */
 
-public class DatabaseBlobClassifier extends AsyncTask<String, Integer, HashMap<String, String>> implements ModelClassifierInterface{
+public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Integer, HashMap<String, String>> implements ModelClassifierInterface{
     final static String LOG_TAG = "DATABASE_BLOB_CLASS";
     BlobDBHelper blobDBHelper;
     Context c;
     SQLiteDatabase writableDB;
+    StringBuilder debugStringBuilder;
 
     String truePositiveLabel;
-    TextView output;
+    TextView outputTextView, debugTextView;
     ProgressBar pb;
+    int pbMax, pbStatus = 0;
     public DatabaseBlobClassifier(Context context){
         c = context;
         blobDBHelper = BlobDBHelper.getInstance(context);
         writableDB = blobDBHelper.getWritableDatabase();
+        debugStringBuilder = new StringBuilder();
     }
     public void setProgressBar(ProgressBar pb){
         this.pb = pb;
@@ -50,13 +54,13 @@ public class DatabaseBlobClassifier extends AsyncTask<String, Integer, HashMap<S
     public void setTruePositiveLabel(String s){
         truePositiveLabel = s;
     }
-    @Override
-    protected HashMap<String, String> doInBackground(String... strings) {
-        HashMap<String, String> result = new HashMap<>();
-        for(String s: strings){
-            result.put(s, classify(s));
-        }
-        return result;
+
+    public void setOutputTextView(TextView outputTextView){
+        this.outputTextView = outputTextView;
+    }
+
+    public void setDebugTextView(TextView debugTextView){
+        this.debugTextView = debugTextView;
     }
 
     @Override
@@ -110,11 +114,47 @@ public class DatabaseBlobClassifier extends AsyncTask<String, Integer, HashMap<S
     }
 
     @Override
-    protected void onPostExecute(HashMap<String, String> stringStringHashMap) {
+    protected void onProgressUpdate(Integer... values) {
+        if (pb != null){
+            pb.setMax(pbMax);
+            pb.setProgress(pbStatus);
+            Log.d(LOG_TAG, "Tried to update progressbar");
+        }
+
+    }
+
+    /**
+     * @param collections of Filenames to train on
+     * @return A HashMap of <Filename, labelGuess>
+     */
+    @Override
+    protected HashMap<String, String> doInBackground(Collection<String>[] collections) {
+        Collection<String> collection = collections[0];
+        pbMax = collection.size();
+        HashMap<String, String> result = new HashMap<>();
+        for(String s: collection){
+            String output = classify(s);
+            debugStringBuilder.append(output);
+            debugStringBuilder.append("\n");
+            result.put(s, output);
+            pbStatus++;
+            publishProgress();
+        }
+        return result;
+    }
+
+    @Override
+    protected void onPostExecute(HashMap<String, String> fileLabelOutput) {
         ArrayList<String> list = new ArrayList<>();
-        list.addAll(stringStringHashMap.keySet());
-        HashMap<String, String> actual = blobDBHelper.getFilesAndLabels(list);
-        ClassificationReport cr = new ClassificationReport(actual, stringStringHashMap, "Hi");
+        list.addAll(fileLabelOutput.keySet());
+        HashMap<String, String> actual = blobDBHelper.getFileLabelGivenFiles(list);
+        ClassificationReport cr = new ClassificationReport(actual, fileLabelOutput, truePositiveLabel);
+        if(outputTextView != null){
+            outputTextView.setText(cr.toConfusionMatrix());
+        }
+        if (debugTextView != null){
+            debugTextView.setText(debugStringBuilder.toString());
+        }
     }
 
 }

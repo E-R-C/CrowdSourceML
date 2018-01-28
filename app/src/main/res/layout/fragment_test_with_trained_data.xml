@@ -19,7 +19,7 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/StartTraining"
+        android:id="@+id/TestWithTrainedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/Test" />
@@ -34,5 +34,12 @@
         android:id="@+id/TestAllResultsTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="monospace"
         android:text="@string/ResultsPrompt" />
+
+    <TextView
+        android:id="@+id/TestWTrainedDebugTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="DEBUG" />
 </LinearLayout>

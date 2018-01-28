@@ -21,6 +21,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import edu.hendrix.huynhem.seniorthesis.Database.BlobDBHelper;
 import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobClassifier;
@@ -117,8 +118,6 @@ public class TrainFragment extends Fragment {
                 DatabaseBlobTrainer n = new DatabaseBlobTrainer(getActivity().getApplicationContext());
                 n.setPb(pb);
                 n.execute(mFileName, (String) spinner.getSelectedItem());
-                // TODO: Record the filenames and the labels of each thing into the database
-                // I need to be able to mass classify and create a confusion matrix at the end
                 // Goal for 1/12/2018: create a fragment that classifies all of the trained images
             }
         });
@@ -128,7 +127,9 @@ public class TrainFragment extends Fragment {
             public void onClick(View view) {
                 DatabaseBlobClassifier dc = new DatabaseBlobClassifier(getActivity().getApplicationContext());
                 dc.setProgressBar(pb);
-                dc.execute(mFileName);
+                ArrayList<String> input = new ArrayList<>();
+                input.add(mFileName);
+                dc.execute(input);
             }
         });
     }
@@ -219,7 +220,6 @@ public class TrainFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface LabelFragmentNavigation {
-        // TODO: Update argument type and name
         void goToCurrentJobs();
         void goToMenu();
         void goToTest(String fileName);

@@ -53,10 +53,14 @@ public class ClassificationReport {
                 ), 1) + 5;
         String[] prefixes = {"#n = ", "TN = ", "FN = "};
         int[] suffixes = {total, trueNegative, falseNegative};
-        result.append(String.format("#n = %d$" + stringLength + "s|label = %s\n", total, positiveLabel));
-        result.append(String.format("TN = %d$" + stringLength + "s|FP = %d\n", trueNegative, falsePositive));
-        result.append(String.format("FN = %d$" + stringLength + "s|TP = %d\n", falseNegative, truePositive));
-       return result.toString();
+        result.append(String.format("#n = %d|label = %s%-" + stringLength + "s", total, positiveLabel,""));
+        result.append("\n");
+        result.append(String.format("TN = %d|FP = %d%-" + stringLength + "s", trueNegative, falsePositive,""));
+        result.append("\n");
+        result.append(String.format("FN = %d|TP = %d%-" + stringLength + "s", falseNegative, truePositive,""));
+        result.append("\n");
+
+        return result.toString();
     }
 
 
