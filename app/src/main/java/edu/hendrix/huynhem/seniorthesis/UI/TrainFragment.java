@@ -25,8 +25,8 @@ import java.util.ArrayList;
 
 import edu.hendrix.huynhem.seniorthesis.Database.BlobDBHelper;
 import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobClassifier;
-import edu.hendrix.huynhem.seniorthesis.Models.DatabaseBlobTrainer;
 import edu.hendrix.huynhem.seniorthesis.R;
+import edu.hendrix.huynhem.seniorthesis.Threading.TrainerManager;
 
 
 /**
@@ -34,12 +34,10 @@ import edu.hendrix.huynhem.seniorthesis.R;
  * Activities that contain this fragment must implement the
  * {@link LabelFragmentNavigation} interface
  * to handle interaction events.
- * Use the {@link TrainFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class TrainFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    public static final String MOSTRECENTPICTUREKEY = "UNIQUEKEY1";
+    public static final String PICTUREARRAY = "PICTURE-ARRAY";
     public static final String LOG_TAG = "LABEL_FRAGMENT";
 
     // TODO: Rename and change types of parameters
@@ -50,31 +48,20 @@ public class TrainFragment extends Fragment {
     private ImageView iView = null;
     private Spinner spinner = null;
     private BlobDBHelper dbHelper;
+    private String[] filesArray;
 
     public TrainFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Name of Photo.
-     * @return A new instance of fragment TrainFragment.
-     */
-    public static TrainFragment newInstance(String param1) {
-        TrainFragment fragment = new TrainFragment();
-        Bundle args = new Bundle();
-        args.putString(MOSTRECENTPICTUREKEY, param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mFileName = getArguments().getString(MOSTRECENTPICTUREKEY);
+        if (getArguments() != null && getArguments().getStringArray(PICTUREARRAY).length > 0) {
+            filesArray = getArguments().getStringArray(PICTUREARRAY);
+            mFileName = filesArray[0];
         }
         dbHelper = BlobDBHelper.getInstance(getActivity().getApplication().getApplicationContext());
     }
@@ -89,6 +76,7 @@ public class TrainFragment extends Fragment {
     //  Initialize buttons here
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
         spinner = view.findViewById(R.id.spinner);
         showImage(view);
         updateSpinner(view);
@@ -112,13 +100,17 @@ public class TrainFragment extends Fragment {
             }
         });
         Button saveAndTrainButton = view.findViewById(R.id.saveAndTrainButton);
+        saveAndTrainButton.setText(getString(R.string.TRAINPrompt, filesArray.length));
         saveAndTrainButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatabaseBlobTrainer n = new DatabaseBlobTrainer(getActivity().getApplicationContext());
-                n.setPb(pb);
-                n.execute(mFileName, (String) spinner.getSelectedItem());
-                // Goal for 1/12/2018: create a fragment that classifies all of the trained images
+//                DatabaseBlobTrainer n = new DatabaseBlobTrainer(getActivity().getApplicationContext());
+//                n.setPb(pb);
+//                n.execute(mFileName, (String) spinner.getSelectedItem());
+                for(String s: filesArray){
+                    TrainerManager.startNewTrainTask(s, (String) spinner.getSelectedItem(), getActivity().getApplicationContext());
+                    Log.d(LOG_TAG, "Started " + s);
+                }
             }
         });
         Button classifyButton = view.findViewById(R.id.classify_button);
@@ -153,7 +145,7 @@ public class TrainFragment extends Fragment {
             iView.setImageBitmap(getRotatedImage());
         } catch (IOException e) {
             e.printStackTrace();
-            Log.e(LOG_TAG, "Unable to load image!");
+            Log.e(LOG_TAG, "Unable to load image! " + mFileName);
         }
         Toast.makeText(view.getContext(),mFileName,Toast.LENGTH_LONG).show();
     }
@@ -161,6 +153,7 @@ public class TrainFragment extends Fragment {
         ExifInterface exif = new ExifInterface(mFileName);
         int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
         Bitmap bitmap = BitmapFactory.decodeFile(mFileName);
+
         switch (orientation){
             case ExifInterface.ORIENTATION_ROTATE_90:
                 return rotate(bitmap, 90);

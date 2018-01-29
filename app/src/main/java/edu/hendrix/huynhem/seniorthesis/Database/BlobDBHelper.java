@@ -229,4 +229,22 @@ public class BlobDBHelper extends SQLiteOpenHelper {
         sb.append(" = ? ");
         return sb.toString();
     }
+
+    /**
+     * https://stackoverflow.com/questions/38672579/delete-all-tables-from-sqlite-database
+     * Removes all tables from the Database
+     */
+    public void DeleteDatabase(){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor c = db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'",null);
+        List<String> tables = new ArrayList<>();
+        while (c.moveToNext()) {
+            tables.add(c.getString(0));
+        }
+
+        for (String table : tables) {
+            String dropQuery = "DROP TABLE IF EXISTS " + table;
+            db.execSQL(dropQuery);
+        }
+    }
 }

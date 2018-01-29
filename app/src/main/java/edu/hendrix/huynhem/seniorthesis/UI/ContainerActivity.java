@@ -38,7 +38,7 @@ public class ContainerActivity extends AppCompatActivity
         galleryAddPic(filename);
         TrainFragment lf = new TrainFragment();
         Bundle args = new Bundle();
-        args.putString(TrainFragment.MOSTRECENTPICTUREKEY,filename);
+        args.putStringArray(TrainFragment.PICTUREARRAY,new String[]{filename});
         replaceFragment(lf, args);
     }
 
@@ -46,6 +46,12 @@ public class ContainerActivity extends AppCompatActivity
     public void goToTestWithTrained() {
         TestWithTrainedDataFragment tf = new TestWithTrainedDataFragment();
         replaceFragment(tf, new Bundle());
+    }
+
+    @Override
+    public void goToTrainMany(String[] files) {
+        Bundle args = new Bundle();
+        args.putStringArray(TrainFragment.PICTUREARRAY,files);
     }
 
     @Override
@@ -57,7 +63,6 @@ public class ContainerActivity extends AppCompatActivity
     public void goToMenu() {
         CapturePhotoMenu frag = new CapturePhotoMenu();
         Bundle args = new Bundle();
-        frag.setArguments(args);
         replaceFragment(frag, args);
     }
 
@@ -65,7 +70,7 @@ public class ContainerActivity extends AppCompatActivity
     public void goToTest(String filename) {
         TestFragment tf = new TestFragment();
         Bundle args = new Bundle();
-        args.putString(TrainFragment.MOSTRECENTPICTUREKEY,filename);
+        args.putString(TrainFragment.PICTUREARRAY,filename);
         replaceFragment(tf, args);
     }
 
@@ -73,7 +78,8 @@ public class ContainerActivity extends AppCompatActivity
     public void toTrainingFragment(String filename) {
         TrainFragment tf = new TrainFragment();
         Bundle args = new Bundle();
-        args.putString(TrainFragment.MOSTRECENTPICTUREKEY,filename);
+
+        args.putStringArray(TrainFragment.PICTUREARRAY,new String[]{filename});
         replaceFragment(tf, args);
     }
 

@@ -1,11 +1,12 @@
 package edu.hendrix.huynhem.seniorthesis.UI;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,12 +21,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import edu.hendrix.huynhem.seniorthesis.Database.BlobDBHelper;
 import edu.hendrix.huynhem.seniorthesis.R;
 
 /**
@@ -99,6 +102,8 @@ public class CapturePhotoMenu extends Fragment {
             public void onClick(View view) {
                 Intent i = new Intent(Intent.ACTION_PICK);
                 i.setType("image/*");
+                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                i.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(i, REQUEST_IMAGE_FROM_GAL);
             }
         });
@@ -114,6 +119,15 @@ public class CapturePhotoMenu extends Fragment {
             @Override
             public void onClick(View view) {
                 pictureListener.goToTestWithTrained();
+            }
+        });
+        Button deleteDatabase = view.findViewById(R.id.ResetDatabaseButton);
+        deleteDatabase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BlobDBHelper dbHelper = BlobDBHelper.getInstance(getActivity().getApplicationContext());
+                dbHelper.DeleteDatabase();
+                Toast.makeText(getActivity().getApplicationContext(),"Deleted Database", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -193,24 +207,45 @@ public class CapturePhotoMenu extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUEST_IMAGE_CAPTURE) {
-                // Do something with imagePath
 
-//                Bitmap photo = (Bitmap) data.getExtras().get("data");
-//                imageview.setImageBitmap(photo);
-                // CALL THIS METHOD TO GET THE URI FROM THE BITMAP
-//                Uri selectedImage = getImageUri(getActivity(), photo);
-//                String realPath=getRealPathFromURI(selectedImage);
-//                selectedImage = Uri.parse(realPath);
-                pictureListener.pictureCaptured(MOST_RECENT_PHOTO_PATH);
-            } else if (requestCode == REQUEST_IMAGE_FROM_GAL){
-                final Uri imageUri = data.getData();
-                MOST_RECENT_PHOTO_PATH =  imageUri.getPath();
-                pictureListener.pictureCaptured(MOST_RECENT_PHOTO_PATH);
+        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            pictureListener.pictureCaptured(MOST_RECENT_PHOTO_PATH);
+        } else if (requestCode == REQUEST_IMAGE_FROM_GAL){
+            if (data.getClipData() != null){
+                int numberOfImages = data.getClipData().getItemCount();
+                String[] links = new String[numberOfImages];
+
+                for (int i = 0; i < numberOfImages; i++) {
+                    Log.d(LOG_TAG, data.getClipData().getItemAt(i).getUri().toString());
+                    links[i] = getRealPathFromURI(data.getClipData().getItemAt(i).getUri());
+                    Log.d(LOG_TAG, "Added " + links[i]);
+                }
             }
+            else {
+                Log.d(LOG_TAG, "getClipData is null");
+            }
+            final Uri imageUri = data.getData();
+            MOST_RECENT_PHOTO_PATH =  getRealPathFromURI(imageUri);
+            pictureListener.pictureCaptured(MOST_RECENT_PHOTO_PATH);
         }
+        Log.d(LOG_TAG, "Activty Result was " + resultCode);
     }
+
+
+
+    // From https://stackoverflow.com/questions/3401579/get-filename-and-path-from-uri-from-mediastore
+    private String getRealPathFromURI(Uri contentUri) {
+        Context c = getActivity().getApplicationContext();
+        String[] proj = { MediaStore.Images.Media.DATA };
+        CursorLoader loader = new CursorLoader(c, contentUri, proj, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        String result = cursor.getString(column_index);
+        cursor.close();
+        return result;
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -242,8 +277,9 @@ public class CapturePhotoMenu extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface capturePhotoMenuInteractions {
-        public void pictureCaptured(String filename);
+        void pictureCaptured(String filename);
         void goToTestWithTrained();
+        void goToTrainMany(String[] files);
     }
 
 }

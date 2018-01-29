@@ -25,4 +25,5 @@
     <string name="test_with_trained_data">Test With Trained Data</string>
     <string name="TestAllPrompt">Please pick which location to test:</string>
     <string name="ResultsPrompt">Results will show up here when classification is done</string>
+    <string name="TRAINPrompt">TRAIN (%1$d)</string>
 </resources>
