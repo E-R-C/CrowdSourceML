@@ -50,8 +50,11 @@ public class ContainerActivity extends AppCompatActivity
 
     @Override
     public void goToTrainMany(String[] files) {
+        TrainFragment lf = new TrainFragment();
         Bundle args = new Bundle();
         args.putStringArray(TrainFragment.PICTUREARRAY,files);
+        replaceFragment(lf, args);
+
     }
 
     @Override
