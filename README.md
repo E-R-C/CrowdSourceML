@@ -8,9 +8,10 @@ This is my undergraduate senior thesis project at Hendrix College. The goal of t
 - [x] Create database with Locations and allow user to populate it
 - [x] Create a way to record all trained images so far (Done via database)
 - [x] Develop a way to filter FAST points (Distance to center, however, this should be revisited and use methods like Shi-thomassi filtering).
-- [ ] Pick a photo from their gallery
-- [ ] Train multiple images at a time
-- [ ] Classify all trained images
+- [x] Pick a photo from their gallery
+- [x] Train multiple images at a time
+- [ ] Move training to service
+- [x] Classify all trained images
 - [ ] Display Database size
 - [ ] Show user confusion matrix and how many patches were matched
 # Stretch Goals
