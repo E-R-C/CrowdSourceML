@@ -143,9 +143,12 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
         for(String s: collection){
             String output = classify(s);
             debugStringBuilder.append(output);
-            debugStringBuilder.append(" patches Existed: ");
+            debugStringBuilder.append(" patches found out of: ");
             debugStringBuilder.append(totalMatches);
-            debugStringBuilder.append("/256\n");
+            debugStringBuilder.append("/");
+            debugStringBuilder.append(maxFAST);
+            debugStringBuilder.append("\n");
+
             result.put(s, output);
             pbStatus++;
             publishProgress();

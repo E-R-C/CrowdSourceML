@@ -10,11 +10,10 @@ This is my undergraduate senior thesis project at Hendrix College. The goal of t
 - [x] Develop a way to filter FAST points (Distance to center, however, this should be revisited and use methods like Shi-thomassi filtering).
 - [x] Pick a photo from their gallery
 - [x] Train multiple images at a time
-- [ ] Move training to service
 - [x] Classify all trained images
 - [ ] Display Database size
-- [ ] Show user confusion matrix and how many patches were matched
+- [X] Show user confusion matrix and how many patches were matched
 # Stretch Goals
-- [ ] Upload to Android Store
+- [ ] Upload to Android Store (If it works)
 - [ ] Create trainers for other classification models (kNN)
 - [ ] Display which Brief patches were used in the classification process (2 images side by side display)
