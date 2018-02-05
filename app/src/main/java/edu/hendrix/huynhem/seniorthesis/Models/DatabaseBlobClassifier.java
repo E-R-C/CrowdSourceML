@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +20,6 @@ import edu.hendrix.huynhem.seniorthesis.Database.BlobHistogram;
 import edu.hendrix.huynhem.seniorthesis.Database.DbContract;
 import edu.hendrix.huynhem.seniorthesis.Database.Serializer;
 import edu.hendrix.huynhem.seniorthesis.Imaging.BriefPatches;
-import edu.hendrix.huynhem.seniorthesis.Imaging.FAST;
 import edu.hendrix.huynhem.seniorthesis.Imaging.FASTFeature;
 import edu.hendrix.huynhem.seniorthesis.Imaging.Image;
 import edu.hendrix.huynhem.seniorthesis.Util.ClassificationReport;
@@ -37,15 +37,16 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
     SQLiteDatabase writableDB;
     StringBuilder debugStringBuilder;
 
-    String truePositiveLabel;
+    String truePositiveLabel, latestImage;
     TextView outputTextView, debugTextView;
     ProgressBar pb;
-    int pbMax, pbStatus = 0;
+    int pbMax, pbStatus, totalMatches, maxFAST = 0;
     public DatabaseBlobClassifier(Context context){
         c = context;
         blobDBHelper = BlobDBHelper.getInstance(context);
         writableDB = blobDBHelper.getWritableDatabase();
         debugStringBuilder = new StringBuilder();
+
     }
     public void setProgressBar(ProgressBar pb){
         this.pb = pb;
@@ -65,6 +66,8 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
 
     @Override
     public String classify(String imageLocation) {
+        latestImage = imageLocation;
+
         if(writableDB.isOpen()){
             BlobHistogram resultingHist = new BlobHistogram();
             Image image = new Image(imageLocation, maxDimension);
@@ -73,8 +76,8 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
                     DbContract.RestructuredBlobEntry.COLUMN_NAME_COUNTBLOB
             };
             String selection = DbContract.RestructuredBlobEntry.COLUMN_NAME_FEATURE + " =  ?";
-
-            for (int i = 0; i < FAST.TOTAL_PATCHES && fastpts.size() > 0 ; i++){
+            maxFAST = fastpts.size();
+            for (int i = 0; fastpts.size() > 0 ; i++){
                 String hexKey = BriefPatches.calcDescriptorString(image,fastpts.poll());
                 String[] args = {hexKey};
                 Cursor cursor = writableDB.query(
@@ -88,15 +91,20 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
                         "1"                 // limit to 1
                 );
                 cursor.moveToNext();
-                byte[] blobBytes = cursor.getBlob(cursor.getColumnIndex(DbContract.RestructuredBlobEntry.COLUMN_NAME_COUNTBLOB));
+                if (cursor.getCount() != 0){
+                    totalMatches++;
+                    byte[] blobBytes = cursor.getBlob(cursor.getColumnIndex(DbContract.RestructuredBlobEntry.COLUMN_NAME_COUNTBLOB));
 
-                try {
-                    BlobHistogram bh = Serializer.deserializeBlob(blobBytes);
-                    resultingHist = resultingHist.mergeMakeNewCopy(bh);
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
+                    try {
+                        BlobHistogram bh = Serializer.deserializeBlob(blobBytes);
+                        resultingHist = resultingHist.mergeMakeNewCopy(bh);
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
+                }
+
+
             String result = resultingHist.getMaxLabel();
             if (result == null){
                 return "Unknown";
@@ -135,10 +143,13 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
         for(String s: collection){
             String output = classify(s);
             debugStringBuilder.append(output);
-            debugStringBuilder.append("\n");
+            debugStringBuilder.append(" patches Existed: ");
+            debugStringBuilder.append(totalMatches);
+            debugStringBuilder.append("/256\n");
             result.put(s, output);
             pbStatus++;
             publishProgress();
+            totalMatches = 0;
         }
         return result;
     }
@@ -148,9 +159,15 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
         ArrayList<String> list = new ArrayList<>();
         list.addAll(fileLabelOutput.keySet());
         HashMap<String, String> actual = blobDBHelper.getFileLabelGivenFiles(list);
+        if (actual.isEmpty()){
+            Toast.makeText(c,fileLabelOutput.get(latestImage) + " " + totalMatches + "/" + maxFAST,Toast.LENGTH_SHORT).show();
+            return;
+        }
         ClassificationReport cr = new ClassificationReport(actual, fileLabelOutput, truePositiveLabel);
         if(outputTextView != null){
             outputTextView.setText(cr.toConfusionMatrix());
+        } else {
+            Toast.makeText(c,fileLabelOutput.get(latestImage) + " " + totalMatches + "/" + maxFAST,Toast.LENGTH_SHORT).show();
         }
         if (debugTextView != null){
             debugTextView.setText(debugStringBuilder.toString());

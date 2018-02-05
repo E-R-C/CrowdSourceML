@@ -7,10 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.PriorityQueue;
 
 import edu.hendrix.huynhem.seniorthesis.Database.BlobDBHelper;
@@ -40,7 +37,6 @@ public class TrainRunnable implements Runnable, ModelTrainerInterface{
     String file, label;
     Context c;
 
-    List<pbListener> listeners = new ArrayList<>();
     public TrainRunnable(String fileLocation, String label, Context c){
         file = fileLocation;
         this.c = c;
@@ -49,26 +45,24 @@ public class TrainRunnable implements Runnable, ModelTrainerInterface{
         writableDB = blobDBHelper.getWritableDatabase();
     }
 
-    public void addListener(pbListener listener){
-        listeners.add(listener);
-    }
-    private void updateListners(){
-        for(pbListener listener: listeners){
-            listener.publishProgress(totalLoops, loopsDone);
-        }
-    }
     @Override
     public void run() {
         Log.d(LOG_TAG, "runnable has started");
+        long startTime = System.currentTimeMillis();
         train(file, label);
+        Log.d(LOG_TAG, "Training finished: Took " + (System.currentTimeMillis() - startTime) + " milli");
+        TrainerManager.bumpJobFinishedCount();
     }
 
     @Override
     public void train(String imageLocation, String label) {
         HashMap<String, BlobHistogram> tempBlobs = new HashMap<>();
         Log.d(LOG_TAG, "START OF TRAINING");
-        blobDBHelper.insertNewFile(imageLocation, label);
         double startTime = System.currentTimeMillis();
+        HashMap<String, String> existMap = blobDBHelper.getAllFilesAndLabels();
+        if (existMap.containsKey(imageLocation)){
+            return;
+        }
         if(writableDB.isOpen()){
             float scaleStep = 0.5f/numScales; // 1 -  the left number is how big the final scale will be.
             Image image = new Image(imageLocation,maxDimension);
@@ -88,11 +82,11 @@ public class TrainRunnable implements Runnable, ModelTrainerInterface{
                         bh.bump(label);
                         loopsDone++;
                     }
-                    updateListners();
                 }
                 Log.d(LOG_TAG, "Finished Image scale " + (1 - (scale * scaleStep)));
             }
             insertToDatabase(tempBlobs);
+            blobDBHelper.insertNewFile(imageLocation, label);
             Log.d(LOG_TAG, "FINISHED TRAINING " + imageLocation + " ms: " + (System.currentTimeMillis() - startTime));
 
         } else {
@@ -120,7 +114,6 @@ public class TrainRunnable implements Runnable, ModelTrainerInterface{
             BlobHistogram newBlob = tempMap.get(key);
             if (cursor.getCount() > 0){
                 // Update Existing blob
-                Log.d(LOG_TAG, "COLUMNS: " + Arrays.toString(cursor.getColumnNames()));
                 cursor.moveToFirst();
                 byte[] oldBlob = cursor.getBlob(cursor.getColumnIndex(DbContract.RestructuredBlobEntry.COLUMN_NAME_COUNTBLOB));
                 try {
@@ -168,7 +161,5 @@ public class TrainRunnable implements Runnable, ModelTrainerInterface{
     public ModelTrainerInterface fromString() {
         return null;
     }
-    interface pbListener {
-        void publishProgress(int totalLoops, int loopsDone);
-    }
+
 }

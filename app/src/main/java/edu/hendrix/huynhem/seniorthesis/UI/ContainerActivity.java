@@ -2,7 +2,13 @@ package edu.hendrix.huynhem.seniorthesis.UI;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,14 +16,16 @@ import android.support.v7.app.AppCompatActivity;
 import java.io.File;
 
 import edu.hendrix.huynhem.seniorthesis.R;
+import edu.hendrix.huynhem.seniorthesis.Threading.TrainerManager;
 
 public class ContainerActivity extends AppCompatActivity
         implements CapturePhotoMenu.capturePhotoMenuInteractions,
         TrainFragment.LabelFragmentNavigation, TrainOrClassifyFragment.TrainOrClassifyInterface,
-        TestFragment.TestFragemntNavigation, TestWithTrainedDataFragment.TestWithTrainedDataInter {
+        TestFragment.TestFragemntNavigation, TestWithTrainedDataFragment.TestWithTrainedDataInter, TrainerManager.NotificationInterface {
+    public final static int NOTIFICATION_ID = 1;
 
-
-
+    private Notification.Builder notification;
+    private static final String LOG_TAG = "CONTAINER_ACTIVITY";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +34,8 @@ public class ContainerActivity extends AppCompatActivity
                 .add(R.id.FragmentView,frag).commit();
 
         setContentView(R.layout.activity_container);
+        notification = buildNotification();
+        TrainerManager.setmListener(this);
    }
 
     @Override
@@ -114,5 +124,50 @@ public class ContainerActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    private Notification.Builder buildNotification(){
+        Bitmap bm = Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher),
+                getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_width),
+                getResources().getDimensionPixelSize(android.R.dimen.notification_large_icon_height),
+                true);
+        Intent intent = new Intent(this, ContainerActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, NOTIFICATION_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        builder.setContentTitle("Training Jobs running");
+        builder.setContentText("Waiting for Jobs");
+        builder.setSubText("0 Jobs");
+        builder.setContentIntent(pendingIntent);
+        builder.setTicker("Fancy Notification");
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        builder.setLargeIcon(bm);
+        builder.setAutoCancel(false);
+        builder.setPriority(Notification.PRIORITY_DEFAULT);
+        builder.setOngoing(true);
+        builder.setProgress(0,0,true);
+        Notification notification = builder.build();
+        NotificationManager notificationManger =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        assert notificationManger != null;
+        notificationManger.notify(NOTIFICATION_ID, notification);
+        return builder;
+    }
+
+    @Override
+    public void setProgressVals(int done, int total) {
+
+        NotificationManager notificationManger =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if(done == total){
+            notification.setSubText("No jobs running");
+            notification.setContentText("");
+            notification.setProgress(0,0,false);
+        } else {
+            notification.setSubText(total - done + " jobs remaining");
+            notification.setContentText(String.format("%d jobs done out of %d total", done, total));
+            notification.setProgress(total,done,false);
+        }
+
+        notificationManger.notify(NOTIFICATION_ID,notification.build());
     }
 }

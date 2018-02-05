@@ -10,6 +10,7 @@ import java.util.HashMap;
 public class BlobHistogram implements Serializable {
     HashMap<String, Integer> labelHistogram; // Label and counts
 
+
     public BlobHistogram(){
         labelHistogram = new HashMap<>();
     }
@@ -44,7 +45,7 @@ public class BlobHistogram implements Serializable {
 
     public String getMaxLabel(){
         int maxCount = 0;
-        String result = "No Labels in Histogram";
+        String result = "" + labelHistogram.size();
         for(String s: labelHistogram.keySet()){
             if (labelHistogram.get(s) > maxCount){
                 maxCount = labelHistogram.get(s);

@@ -16,27 +16,34 @@ import java.util.PriorityQueue;
 
 public class Image {
     private Bitmap bitmap;
-    public Image(String  location){
-        bitmap = BitmapFactory.decodeFile(location);
-    }
     public Image(Bitmap b){
         bitmap = b;
     }
-    public Image(String location, int maxDimension){
-        bitmap = BitmapFactory.decodeFile(location);
-        if (bitmap.getWidth() > bitmap.getHeight()){
-            if (bitmap.getWidth() > maxDimension){
-                float percent = (maxDimension * 1.0f) / (float) getWidth() ;
-                Log.d("IMAGE", percent + "");
-                bitmap = scaleImage(percent).bitmap;
-            }
-        } else {
-            if (bitmap.getHeight() > maxDimension){
-                float percent = (maxDimension * 1.0f) / (float) getHeight() ;
-                bitmap = scaleImage(percent).bitmap;
+    public Image(String location, int maxDimension) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(location, options);
+        int height = options.outHeight;
+        int width = options.outWidth;
+        int inSampleSize = 1;
+        // https://developer.android.com/topic/performance/graphics/load-bitmap.html
+        // We have to do this or else it will overflow the memory of the device;
+        if (height > maxDimension || width > maxDimension) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= maxDimension
+                    || (halfWidth / inSampleSize) >= maxDimension) {
+                inSampleSize *= 2;
             }
         }
+        options.inSampleSize = inSampleSize;
+        options.inJustDecodeBounds = false;
+        bitmap = BitmapFactory.decodeFile(location, options);
+
     }
+
     
     public int getWidth(){
         return bitmap.getWidth();
@@ -53,16 +60,23 @@ public class Image {
     // This could potentially be rewritten to test other comparison methods
     // It returns 0001 or 0000 which will be OR'd with some 0 bit in the descriptor.
     public int comparePixel(int color1, int color2){
-        if (color1 < 0 && color2 < 0 || color2 < 0 && color1 >= 0){
-            return 0;
-        } else if (color1 < 0 && color2 >= 0){
-            return 1;
-        }
-        byte score = 0;
-        if(Color.red(color1) > Color.red(color2)) score ++;
-        if(Color.blue(color1) > Color.blue(color2)) score++;
-        if(Color.green(color1) > Color.green(color2)) score++;
-        return score > 1 ? 1 : 0;
+//        if (color1 < 0 && color2 < 0 || color2 < 0 && color1 >= 0){
+//            return 0;
+//        } else if (color1 < 0 && color2 >= 0){
+//            return 1;
+//        }
+//        byte score = 0;
+//        if(Color.red(color1) > Color.red(color2)) score ++;
+//        if(Color.blue(color1) > Color.blue(color2)) score++;
+//        if(Color.green(color1) > Color.green(color2)) score++;
+
+        return greyValue(color1) > greyValue(color2) ? 1 : 0;
+    }
+    private double greyValue(int color1){
+        int r = Color.red(color1);
+        int g = Color.green(color1);
+        int b = Color.blue(color1);
+        return (r + g + b)/3.0;
     }
 
     public int getValueAt(int x, int y) {

@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -64,6 +63,7 @@ public class TrainFragment extends Fragment {
             mFileName = filesArray[0];
         }
         dbHelper = BlobDBHelper.getInstance(getActivity().getApplication().getApplicationContext());
+
     }
 
     @Override
@@ -111,6 +111,7 @@ public class TrainFragment extends Fragment {
                     TrainerManager.startNewTrainTask(s, (String) spinner.getSelectedItem(), getActivity().getApplicationContext());
                     Log.d(LOG_TAG, "Started " + s);
                 }
+
             }
         });
         Button classifyButton = view.findViewById(R.id.classify_button);
@@ -147,7 +148,6 @@ public class TrainFragment extends Fragment {
             e.printStackTrace();
             Log.e(LOG_TAG, "Unable to load image! " + mFileName);
         }
-        Toast.makeText(view.getContext(),mFileName,Toast.LENGTH_LONG).show();
     }
     private Bitmap getRotatedImage() throws IOException {
         ExifInterface exif = new ExifInterface(mFileName);
