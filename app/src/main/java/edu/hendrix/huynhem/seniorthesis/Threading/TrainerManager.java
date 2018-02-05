@@ -26,10 +26,10 @@ public class TrainerManager {
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
 
     // Sets the initial threadpool size to 8
-    private static final int CORE_POOL_SIZE = 2;
+    private static final int CORE_POOL_SIZE = 8;
 
     // Sets the maximum threadpool size to 8
-    private static final int MAXIMUM_POOL_SIZE = 2;
+    private static final int MAXIMUM_POOL_SIZE = 8;
 
     // A queue of Runnables for the image decoding pool
     private final BlockingQueue<Runnable> mTrainQueue;
