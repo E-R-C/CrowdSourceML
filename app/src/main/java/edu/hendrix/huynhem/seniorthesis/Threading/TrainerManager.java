@@ -14,9 +14,6 @@ import java.util.concurrent.TimeUnit;
 
 public class TrainerManager {
     private static final String LOG_TAG = "TRAINER_MANAGER";
-    static final int TRAINING_DONE = 0;
-    static final int TRAINING_UPDATE = 1;
-
 
     private static int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
     // Sets the amount of time an idle thread will wait for a task before terminating
@@ -26,10 +23,10 @@ public class TrainerManager {
     private static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
 
     // Sets the initial threadpool size to 8
-    private static final int CORE_POOL_SIZE = 8;
+    private static final int CORE_POOL_SIZE = NUMBER_OF_CORES;
 
     // Sets the maximum threadpool size to 8
-    private static final int MAXIMUM_POOL_SIZE = 8;
+    private static final int MAXIMUM_POOL_SIZE = NUMBER_OF_CORES;
 
     // A queue of Runnables for the image decoding pool
     private final BlockingQueue<Runnable> mTrainQueue;
