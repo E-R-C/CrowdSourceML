@@ -77,7 +77,7 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
             };
             String selection = DbContract.RestructuredBlobEntry.COLUMN_NAME_FEATURE + " =  ?";
             maxFAST = fastpts.size();
-            for (int i = 0; fastpts.size() > 0 ; i++){
+            for (; fastpts.size() > 0 ; ){
                 String hexKey = BriefPatches.calcDescriptorString(image,fastpts.poll());
                 String[] args = {hexKey};
                 Cursor cursor = writableDB.query(
@@ -126,7 +126,6 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
         if (pb != null){
             pb.setMax(pbMax);
             pb.setProgress(pbStatus);
-            Log.d(LOG_TAG, "Tried to update progressbar");
         }
 
     }
@@ -141,6 +140,8 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
         pbMax = collection.size();
         HashMap<String, String> result = new HashMap<>();
         for(String s: collection){
+            totalMatches = 0;
+            Log.d(LOG_TAG, "Starting to classify " + s);
             String output = classify(s);
             debugStringBuilder.append(output);
             debugStringBuilder.append(" patches found out of: ");
@@ -152,7 +153,6 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
             result.put(s, output);
             pbStatus++;
             publishProgress();
-            totalMatches = 0;
         }
         return result;
     }
@@ -162,7 +162,12 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
         ArrayList<String> list = new ArrayList<>();
         list.addAll(fileLabelOutput.keySet());
         HashMap<String, String> actual = blobDBHelper.getFileLabelGivenFiles(list);
+        for(String key: list){
+            Log.d(LOG_TAG, "Key: " + key);
+            Log.d(LOG_TAG, "value: " + fileLabelOutput.get(key));
+        }
         if (actual.isEmpty()){
+            Log.d(LOG_TAG, fileLabelOutput.get(latestImage) + " " + totalMatches + "/" + maxFAST);
             Toast.makeText(c,fileLabelOutput.get(latestImage) + " " + totalMatches + "/" + maxFAST,Toast.LENGTH_SHORT).show();
             return;
         }
@@ -170,6 +175,7 @@ public class DatabaseBlobClassifier extends AsyncTask<Collection<String>, Intege
         if(outputTextView != null){
             outputTextView.setText(cr.toConfusionMatrix());
         } else {
+            Log.d(LOG_TAG, debugStringBuilder.toString());
             Toast.makeText(c,fileLabelOutput.get(latestImage) + " " + totalMatches + "/" + maxFAST,Toast.LENGTH_SHORT).show();
         }
         if (debugTextView != null){

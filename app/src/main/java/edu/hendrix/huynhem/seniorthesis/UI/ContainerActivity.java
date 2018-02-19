@@ -143,7 +143,7 @@ public class ContainerActivity extends AppCompatActivity
         builder.setLargeIcon(bm);
         builder.setAutoCancel(false);
         builder.setPriority(Notification.PRIORITY_DEFAULT);
-        builder.setOngoing(true);
+//        builder.setOngoing(false);
         builder.setProgress(0,0,true);
         Notification notification = builder.build();
         NotificationManager notificationManger =

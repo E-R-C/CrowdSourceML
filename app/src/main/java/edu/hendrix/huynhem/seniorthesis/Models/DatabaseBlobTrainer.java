@@ -72,7 +72,7 @@ public class DatabaseBlobTrainer extends AsyncTask<String, Void, Boolean> implem
                     float rotation = ((180.0f/numRot)*rot) - 90;
                     Image tempImage = scaledImage.rotateImage(rotation);
                     PriorityQueue<FASTFeature> fastPoints = FAST.calculateFASTPoints(tempImage);
-                    for(int i = 0; i < FAST.TOTAL_PATCHES && fastPoints.peek() != null; i++){
+                    for(int i = 0;  fastPoints.peek() != null; i++){ // i < FAST.TOTAL_PATCHES... I am testing if if I put all points in, will it match
                         FASTFeature point = fastPoints.poll();
                         String featureString = BriefPatches.calcDescriptorString(image,point);
                         if (!tempBlobs.containsKey(featureString)) {
